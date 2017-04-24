@@ -1,0 +1,45 @@
+html, body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: 'Rubik', sans-serif;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#search-panel {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#search-panel-icons {
+	width: 100%;
+}
+
+.search-panel-icon {
+	display: block;
+	background-color: yellow;
+	width: 100%;
+	height: 0;
+	padding-bottom: 100%;
+}
+
+.search-panel-icon>img {
+	width: 60%;
+	padding: 20%;
+}
+
+.search-panel-label {
+	display: block;
+	text-align: center;
+	letter-spacing: 0.12em;
+	font-size: 0.85em;
+	margin-top: 5%;
+}

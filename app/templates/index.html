@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block body %}
+	<div id="main">
+		<div id="search-panel">
+			<div id="search-panel-icons">
+				<el-row :gutter="10">
+					<el-col :xs="12" :sm="8" :md="4" :lg="4">
+						<div class="search-panel-icon">
+							<!-- House by hans draiman from the Noun Project -->
+							<img src="{{ url_for('static', filename='img/housing.svg') }}">
+						</div>
+						<span class="search-panel-label">HOUSING</span>
+					</el-col>
+					<el-col :xs="12" :sm="8" :md="4" :lg="4">
+						<a class="search-panel-icon">
+							<!-- Briefcase by mikicon from the Noun Project -->
+							<img src="{{ url_for('static', filename='img/job.svg') }}">
+						</a>
+						<span class="search-panel-label">JOB</span>
+					</el-col>
+					<el-col :xs="12" :sm="8" :md="4" :lg="4">
+						<a class="search-panel-icon">
+							<!-- Ticket by Awesome from the Noun Project -->
+							<img src="{{ url_for('static', filename='img/event.svg') }}">
+						</a>
+						<span class="search-panel-label">EVENT</span>
+					</el-col>
+					<el-col :xs="12" :sm="8" :md="4" :lg="4">
+						<a class="search-panel-icon">
+							<!-- sales tag by Mihail Zhukov from the Noun Project -->
+							<img src="{{ url_for('static', filename='img/sale.svg') }}">
+						</a>
+						<span class="search-panel-label">ITEM SALE</span>
+					</el-col>
+					<el-col :xs="12" :sm="8" :md="4" :lg="4">
+						<a class="search-panel-icon">
+							<!-- Heart by Lorena Salagre from the Noun Project -->
+							<img src="{{ url_for('static', filename='img/romance.svg') }}">
+						</a>
+						<span class="search-panel-label">ROMANCE</span>
+					</el-col>
+					<el-col :xs="12" :sm="8" :md="4" :lg="4">
+						<a class="search-panel-icon">
+							<!-- Search by Deepz from the Noun Project -->
+							<img src="{{ url_for('static', filename='img/search.svg') }}">
+						</a>
+						<span class="search-panel-label">SEARCH</span>
+					</el-col>
+				</el-row>
+			</div>
+		</div>
+	</div>
+{% endblock %}
