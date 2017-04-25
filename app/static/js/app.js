@@ -5,5 +5,8 @@ var main = new Vue({
 	},
 	mounted: function() {
 
+	},
+	watch: {
+
 	}
 });
