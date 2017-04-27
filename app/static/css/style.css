@@ -68,6 +68,10 @@ body {
 	cursor: pointer;
 }
 
+.search-panel-icon.active {
+	background: rgba(255,255,255,1);
+}
+
 .search-panel-icon>img {
 	width: 50%;
 	padding: 25%;

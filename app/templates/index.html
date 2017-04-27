@@ -8,45 +8,57 @@
 			<div id="search-panel-icons">
 				<el-row :gutter="10">
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon">
+						<div class="search-panel-icon"
+								v-on:click="showSearchPanel('housing')"
+								:class="{ active: searchPanelType === 'housing' }">
 							<!-- House by hans draiman from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/housing.svg') }}">
 						</div>
 						<span class="search-panel-label">HOUSING</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<a class="search-panel-icon">
+						<div class="search-panel-icon"
+								v-on:click="showSearchPanel('job')"
+								:class="{ active: searchPanelType === 'job' }">
 							<!-- Briefcase by mikicon from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/job.svg') }}">
-						</a>
+						</div>
 						<span class="search-panel-label">JOB</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<a class="search-panel-icon">
+						<div class="search-panel-icon"
+								v-on:click="showSearchPanel('event')"
+								:class="{ active: searchPanelType === 'event' }">
 							<!-- Ticket by Awesome from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/event.svg') }}">
-						</a>
+						</div>
 						<span class="search-panel-label">EVENT</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<a class="search-panel-icon">
+						<div class="search-panel-icon"
+								v-on:click="showSearchPanel('sale')"
+								:class="{ active: searchPanelType === 'sale' }">
 							<!-- sales tag by Mihail Zhukov from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/sale.svg') }}">
-						</a>
+						</div>
 						<span class="search-panel-label">ITEM SALE</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<a class="search-panel-icon">
+						<div class="search-panel-icon"
+								v-on:click="showSearchPanel('romance')"
+								:class="{ active: searchPanelType === 'romance' }">
 							<!-- Heart by Lorena Salagre from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/romance.svg') }}">
-						</a>
+						</div>
 						<span class="search-panel-label">ROMANCE</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<a class="search-panel-icon">
+						<div class="search-panel-icon"
+								v-on:click="showSearchPanel('search')"
+								:class="{ active: searchPanelType === 'search' }">
 							<!-- Search by Deepz from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/search.svg') }}">
-						</a>
+						</div>
 						<span class="search-panel-label">SEARCH</span>
 					</el-col>
 				</el-row>
