@@ -63,6 +63,11 @@
 					</el-col>
 				</el-row>
 			</div>
+			<transition name="search-panel-options">
+				<div id="search-panel-options" v-if="searchPanelType !== ''">
+					placeholder
+				</div>
+			</transition>
 		</div>
 	</div>
 {% endblock %}

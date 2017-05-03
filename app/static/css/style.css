@@ -51,6 +51,7 @@ body {
 
 #search-panel-icons {
 	width: 100%;
+	transition: all 5s ease;
 }
 
 .search-panel-icon {
@@ -84,4 +85,23 @@ body {
 	font-size: 0.85em;
 	margin-top: 5%;
 	color: rgba(255,255,255,0.95);
+}
+
+#search-panel-options {
+	width: 100%;
+	background: rgba(255,255,255,0.85);
+	border-radius: 5px;
+	position: relative;
+	margin-top: 2.5%;
+	padding: 15% 0;
+	text-align: center;
+}
+
+.search-panel-options-enter-active, .search-panel-options-leave-active {
+	transition: all 0.5s ease;
+}
+
+.search-panel-options-enter, .search-panel-options-leave-to {
+	transform: translateY(10px);
+	opacity: 0;
 }
