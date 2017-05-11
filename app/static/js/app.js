@@ -1,7 +1,12 @@
+ELEMENT.locale(ELEMENT.lang.en)
+
 var main = new Vue({
 	el: '#main',
 	data: {
-		searchPanelType: ''
+		searchPanelType: '',
+		searchInput: '',
+		searchDateRangeStart: null,
+		searchDateRangeEnd: null
 	},
 	mounted: function() {
 
@@ -12,6 +17,9 @@ var main = new Vue({
 	methods: {
 		showSearchPanel: function(type) {
 			this.searchPanelType = type;
+		},
+		handleSearch: function() {
+			alert(this.searchInput);
 		}
 	}
 });

@@ -65,7 +65,70 @@
 			</div>
 			<transition name="search-panel-options">
 				<div id="search-panel-options" v-if="searchPanelType !== ''">
-					placeholder
+					<div id="search-panel-house" v-if="searchPanelType === 'housing'">
+						<el-row :gutter="10">
+							<el-col :md="12">
+								<el-date-picker
+									v-model="searchDateRangeStart"
+									type="date"
+									placeholder="Move-in Date">
+								</el-date-picker>
+							</el-col>
+							<el-col :md="12">
+								<el-date-picker
+									v-model="searchDateRangeEnd"
+									type="date"
+									placeholder="Move-out Date">
+								</el-date-picker>
+							</el-col>
+						</el-row>
+						<el-input
+							placeholder="Location"
+							icon="search"
+							v-model="searchInput"
+							:on-icon-click="handleSearch">
+						</el-input>
+					</div>
+					<div id="search-panel-job" v-if="searchPanelType === 'job'">
+						<el-input
+							placeholder="Search for Jobs"
+							icon="search"
+							v-model="searchInput"
+							:on-icon-click="handleSearch">
+						</el-input>
+					</div>
+					<div id="search-panel-event" v-if="searchPanelType === 'event'">
+						<el-input
+							placeholder="Event Name"
+							v-model="searchInput"
+							:on-icon-click="handleSearch">
+						</el-input>
+						<el-input
+							placeholder="Location"
+							v-model="searchInput"
+							:on-icon-click="handleSearch">
+						</el-input>
+					</div>
+					<div id="search-panel-sale" v-if="searchPanelType === 'sale'">
+						<el-input
+							placeholder="Search for Item"
+							icon="search"
+							v-model="searchInput"
+							:on-icon-click="handleSearch">
+						</el-input>
+					</div>
+					<div id="search-panel-romance" v-if="searchPanelType === 'romance'">
+						romance
+					</div>
+					<div id="search-panel-search" v-if="searchPanelType === 'search'">
+						<el-input
+							placeholder="Search"
+							icon="search"
+							v-model="searchInput"
+							:on-icon-click="handleSearch"
+							@keyup.enter="handleSearch">
+						</el-input>
+					</div>
 				</div>
 			</transition>
 		</div>
