@@ -14,11 +14,12 @@ def search():
 	# post_type = request.form['type']
 	# search_keyword = request.form['keyword']
 	# search_filters = request.form['filters']
+	organization_name = request.args.get('org_name')
 
 	# TODO: Perform search query and return result as JSON
 	url = "http://localhost:19002/query/service"
 
-	payload = "statement=USE%20PeterCraigList%3B%20SELECT%20*%20FROM%20Owner%3B"
+	payload = "statement=USE%20PeterCraigList%3B%20SELECT%20VALUE%20p%20FROM%20Postings%20p%20WHERE%20p.organizationName%20%3D%20%22" + organization_name + "%22%3B"
 	headers = {
 		'content-type': "application/x-www-form-urlencoded",
 		'cache-control': "no-cache"
