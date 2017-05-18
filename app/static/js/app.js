@@ -6,13 +6,36 @@ var main = new Vue({
 		searchPanelType: '',
 		searchInput: '',
 		searchDateRangeStart: null,
-		searchDateRangeEnd: null
+		searchDateRangeEnd: null,
+		housingOptions: ['Parking', 'Private bathroom', 'Pets allowed'],
+		housingCheckbox: [],
+		housingRoommate: '',
+		housingPriceRange: ''
 	},
+	delimiters: ['[[',']]'],
 	mounted: function() {
 
 	},
 	watch: {
 
+	},
+	computed: {
+		housingRoommateLabel: function() {
+			switch (this.housingRoommate) {
+				case '0':
+					return 'All';
+				case '1':
+					return '1 (Single)';
+				case '2':
+					return '2 (Double)';
+				case '3':
+					return '3 (Triple)';
+				case '4':
+					return '4+';
+				default:
+					return 'Room Type';
+			}
+		}
 	},
 	methods: {
 		showSearchPanel: function(type) {
@@ -20,6 +43,15 @@ var main = new Vue({
 		},
 		handleSearch: function() {
 			alert(this.searchInput);
+		},
+		setHousingRoommate: function(option) {
+			this.housingRoommate = option;
+		},
+		formatPriceRange: function(val) {
+			if (val == 1500)
+				return '$1500+';
+			else
+				return '$' + val;
 		}
 	}
 });

@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-	<div id="main" class="center">
+	<div id="main">
 		<a id="logo">
 			<span>Peters</span>list
 		</a>
-		<div id="search-panel">
+		<div id="search-panel" {% raw %}:class="{ clicked: searchPanelType !== '' }"{% endraw %}>
 			<div id="search-panel-icons">
 				<el-row :gutter="10">
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
@@ -45,12 +45,12 @@
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
 						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('romance')"
-								:class="{ active: searchPanelType === 'romance' }">
+								v-on:click="showSearchPanel('lostandfound')"
+								:class="{ active: searchPanelType === 'lostandfound' }">
 							<!-- Heart by Lorena Salagre from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/romance.svg') }}">
 						</div>
-						<span class="search-panel-label">ROMANCE</span>
+						<span class="search-panel-label">LOST & FOUND</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
 						<div class="search-panel-icon"
@@ -67,27 +67,43 @@
 				<div id="search-panel-options" v-if="searchPanelType !== ''">
 					<div id="search-panel-house" v-if="searchPanelType === 'housing'">
 						<el-row :gutter="10">
-							<el-col :md="12">
+							<el-col :md="6">
+								<el-dropdown @command="setHousingRoommate">
+									<el-button>
+										[[ housingRoommateLabel ]]
+										<i class="el-icon-caret-bottom el-icon--right"></i>
+									</el-button>
+									<el-dropdown-menu slot="dropdown">
+										<el-dropdown-item command="0">All</el-dropdown-item>
+										<el-dropdown-item command="1">1 (Single)</el-dropdown-item>
+										<el-dropdown-item command="2">2 (Double)</el-dropdown-item>
+										<el-dropdown-item command="3">3 (Triple)</el-dropdown-item>
+										<el-dropdown-item command="4">4+</el-dropdown-item>
+									</el-dropdown-menu>
+								</el-dropdown>
+							</el-col>
+							<el-col :md="18">
+								<el-slider
+									v-model="housingPriceRange"
+									range
+									:min="200"
+									:max="1500"
+									:format-tooltip="formatPriceRange">
+								</el-slider>	
+							</el-col>
+							<el-col :md="15">
+								<el-checkbox-group v-model="housingCheckbox">
+									<el-checkbox-button v-for="option in housingOptions" :label="option" :key="option">[[option]]</el-checkbox-button>
+								</el-checkbox-group>
+							</el-col>
+							<el-col :md="9">
 								<el-date-picker
 									v-model="searchDateRangeStart"
 									type="date"
 									placeholder="Move-in Date">
 								</el-date-picker>
 							</el-col>
-							<el-col :md="12">
-								<el-date-picker
-									v-model="searchDateRangeEnd"
-									type="date"
-									placeholder="Move-out Date">
-								</el-date-picker>
-							</el-col>
 						</el-row>
-						<el-input
-							placeholder="Location"
-							icon="search"
-							v-model="searchInput"
-							:on-icon-click="handleSearch">
-						</el-input>
 					</div>
 					<div id="search-panel-job" v-if="searchPanelType === 'job'">
 						<el-input
@@ -131,6 +147,43 @@
 					</div>
 				</div>
 			</transition>
+		</div>
+		<div id="housing-results" v-if="searchPanelType === 'housing'">
+			<el-row :gutter="30">
+				<el-col :md="8">
+					<el-card :body-style="{ padding: '0px' }">
+						<img src="https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=" class="image">
+						<div style="padding: 14px;">
+							<span>UTC Berkeley</span>
+							<div class="bottom">
+							Available June 16 for $650/month
+							</div>
+						</div>
+					</el-card>
+				</el-col>
+				<el-col :md="8">
+					<el-card :body-style="{ padding: '0px' }">
+						<img src="https://images.unsplash.com/photo-1488805990569-3c9e1d76d51c?dpr=2&auto=format&fit=crop&w=1500&h=1001&q=80&cs=tinysrgb&crop=&bg=" class="image">
+						<div style="padding: 14px;">
+							<span>VDC Norte Sublease</span>
+							<div class="bottom">
+							Available June 29 for $950/month
+							</div>
+						</div>
+					</el-card>
+				</el-col>
+				<el-col :md="8">
+					<el-card :body-style="{ padding: '0px' }">
+						<img src="https://images.unsplash.com/photo-1463620910506-d0458143143e?dpr=2&auto=format&fit=crop&w=1500&h=1000&q=80&cs=tinysrgb&crop=&bg=" class="image">
+						<div style="padding: 14px;">
+							<span>Oxford Court</span>
+							<div class="bottom">
+							Available July 1 for $720/month
+							</div>
+						</div>
+					</el-card>
+				</el-col>
+			</el-row>
 		</div>
 	</div>
 {% endblock %}

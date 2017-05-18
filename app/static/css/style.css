@@ -47,6 +47,12 @@ body {
 	width: 50%;
 	margin-left: auto;
 	margin-right: auto;
+	padding-top: 20%;
+	transition: all .3s ease;
+}
+
+#search-panel.clicked {
+	padding-top: 10%;
 }
 
 #search-panel-icons {
@@ -93,7 +99,7 @@ body {
 	border-radius: 5px;
 	position: relative;
 	margin-top: 2.5%;
-	padding: 15% 0;
+	padding: 7.5% 0;
 	text-align: center;
 }
 
@@ -107,7 +113,7 @@ body {
 }
 
 #search-panel-options>div {
-	width: 80%;
+	width: 90%;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -116,6 +122,23 @@ body {
 	width: 100%;
 }
 
-#search-panel-options input {
-	margin-bottom: 2.5%;
+#housing-results {
+	position: relative;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: rgba(236, 240, 241,0.8);
+	border-radius: 5px;
+	padding: 2.5%;
+	margin-top: 5%;
+}
+
+.el-card img {
+	max-height: 200px;
+	min-width: 100%;
+}
+
+.bottom {
+	font-size: 13px;
+	color: #999;
 }
