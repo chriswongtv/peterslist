@@ -68,6 +68,7 @@
 					<div id="search-panel-house" v-if="searchPanelType === 'housing'">
 						<el-row :gutter="10">
 							<el-col :md="6">
+								<label>Room Type</label>
 								<el-dropdown @command="setHousingRoommate">
 									<el-button>
 										[[ housingRoommateLabel ]]
@@ -82,7 +83,8 @@
 									</el-dropdown-menu>
 								</el-dropdown>
 							</el-col>
-							<el-col :md="18">
+							<el-col :md="12" id="housing-price">
+								<label>Price Range</label>
 								<el-slider
 									v-model="housingPriceRange"
 									range
@@ -91,50 +93,48 @@
 									:format-tooltip="formatPriceRange">
 								</el-slider>	
 							</el-col>
-							<el-col :md="15">
-								<el-checkbox-group v-model="housingCheckbox">
-									<el-checkbox-button v-for="option in housingOptions" :label="option" :key="option">[[option]]</el-checkbox-button>
-								</el-checkbox-group>
-							</el-col>
-							<el-col :md="9">
+							<el-col :md="6">
+								<label>Move-In Date</label>
 								<el-date-picker
-									v-model="searchDateRangeStart"
+									v-model="housingDateStart"
 									type="date"
 									placeholder="Move-in Date">
 								</el-date-picker>
 							</el-col>
+							<el-col :md="24">
+								<label>Additional Filters</label>
+								<el-checkbox-group v-model="housingCheckbox">
+									<el-checkbox-button v-for="option in housingOptions" :label="option" :key="option">[[option]]</el-checkbox-button>
+								</el-checkbox-group>
+							</el-col>
 						</el-row>
 					</div>
 					<div id="search-panel-job" v-if="searchPanelType === 'job'">
-						<el-input
+						<!-- <el-input
 							placeholder="Search for Jobs"
 							icon="search"
 							v-model="searchInput"
 							:on-icon-click="handleSearch">
-						</el-input>
+						</el-input> -->
 					</div>
 					<div id="search-panel-event" v-if="searchPanelType === 'event'">
 						<el-input
 							placeholder="Event Name"
-							v-model="searchInput"
-							:on-icon-click="handleSearch">
-						</el-input>
-						<el-input
-							placeholder="Location"
-							v-model="searchInput"
-							:on-icon-click="handleSearch">
+							v-model="eventSearchInput"
+							icon="search"
+							:on-icon-click="handleEventSearch">
 						</el-input>
 					</div>
 					<div id="search-panel-sale" v-if="searchPanelType === 'sale'">
-						<el-input
+						<!-- <el-input
 							placeholder="Search for Item"
 							icon="search"
 							v-model="searchInput"
 							:on-icon-click="handleSearch">
-						</el-input>
+						</el-input> -->
 					</div>
-					<div id="search-panel-romance" v-if="searchPanelType === 'romance'">
-						romance
+					<div id="search-panel-lost-and-found" v-if="searchPanelType === 'lostandfound'">
+						lost and found
 					</div>
 					<div id="search-panel-search" v-if="searchPanelType === 'search'">
 						<el-input

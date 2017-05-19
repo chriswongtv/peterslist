@@ -4,13 +4,12 @@ var main = new Vue({
 	el: '#main',
 	data: {
 		searchPanelType: '',
-		searchInput: '',
-		searchDateRangeStart: null,
-		searchDateRangeEnd: null,
+		housingDateStart: new Date(),
 		housingOptions: ['Parking', 'Private bathroom', 'Pets allowed'],
 		housingCheckbox: [],
-		housingRoommate: '',
-		housingPriceRange: ''
+		housingRoommate: '0',
+		housingPriceRange: [450, 1250],
+		eventSearchInput: '',
 	},
 	delimiters: ['[[',']]'],
 	mounted: function() {
@@ -32,8 +31,6 @@ var main = new Vue({
 					return '3 (Triple)';
 				case '4':
 					return '4+';
-				default:
-					return 'Room Type';
 			}
 		}
 	},
