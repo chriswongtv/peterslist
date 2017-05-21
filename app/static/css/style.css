@@ -131,6 +131,29 @@ label {
 	display: inline-block;
 }
 
+/* Results Global */
+.result-container {
+	position: relative;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: rgba(236, 240, 241,0.8);
+	border-radius: 5px;
+	padding: 2.5%;
+	margin-top: 5%;
+}
+
+/* Card */
+.el-card img {
+	max-height: 200px;
+	min-width: 100%;
+}
+
+.bottom {
+	font-size: 13px;
+	color: #999;
+}
+
 /* Housing */
 #search-panel-house {
 	text-align: center;
@@ -148,31 +171,8 @@ label {
 	padding: 0 20px !important;
 }
 
-#housing-results {
-	position: relative;
-	width: 80%;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: rgba(236, 240, 241,0.8);
-	border-radius: 5px;
-	padding: 2.5%;
-	margin-top: 5%;
-}
-
 #housing-results .el-col+.el-col+.el-col+.el-col {
 	padding-top: 30px;
-}
-
-/* Card */
-
-.el-card img {
-	max-height: 200px;
-	min-width: 100%;
-}
-
-.bottom {
-	font-size: 13px;
-	color: #999;
 }
 
 /* Event */
@@ -180,6 +180,6 @@ label {
 	width: 100%;
 }
 
-#search-panel-event label {
+#search-panel-event label, #search-panel-search label {
 	margin-left: 2px;
 }

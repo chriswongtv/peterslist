@@ -50,7 +50,7 @@
 							<!-- Heart by Lorena Salagre from the Noun Project -->
 							<img src="{{ url_for('static', filename='img/romance.svg') }}">
 						</div>
-						<span class="search-panel-label">LOST & FOUND</span>
+						<span class="search-panel-label">LOST+FOUND</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
 						<div class="search-panel-icon"
@@ -69,19 +69,18 @@
 						<el-row :gutter="10">
 							<el-col :md="6">
 								<label>Room Type</label>
-								<el-dropdown @command="setHousingSearchRoommate">
-									<el-button>
-										[[ housingSearchRoommateLabel ]]
-										<i class="el-icon-caret-bottom el-icon--right"></i>
-									</el-button>
-									<el-dropdown-menu slot="dropdown">
-										<el-dropdown-item command="0">All</el-dropdown-item>
-										<el-dropdown-item command="1">1 (Single)</el-dropdown-item>
-										<el-dropdown-item command="2">2 (Double)</el-dropdown-item>
-										<el-dropdown-item command="3">3 (Triple)</el-dropdown-item>
-										<el-dropdown-item command="4">4+</el-dropdown-item>
-									</el-dropdown-menu>
-								</el-dropdown>
+								<el-select v-model="housingSearchRoommate" placeholder="All Rooms">
+									<el-option label="All Rooms" value="0">
+									</el-option>
+									<el-option label="Single Room" value="1">
+									</el-option>
+									<el-option label="Double Room" value="2">
+									</el-option>
+									<el-option label="Triple Room" value="3">
+									</el-option>
+									<el-option label="4+ Room" value="4">
+									</el-option>
+								</el-select>
 							</el-col>
 							<el-col :md="12" id="housing-price">
 								<label>Price Range</label>
@@ -119,7 +118,7 @@
 					</div>
 					<div id="search-panel-event" v-if="searchPanelType === 'event'">
 						<el-row :gutter="10">
-							<el-col :md="18">
+							<el-col :md="12">
 								<label>Filter</label>
 								<el-input
 									placeholder="Search events or categories"
@@ -129,22 +128,30 @@
 								</el-input>
 							</el-col>
 							<el-col :md="6">
+								<label>Category</label>
+								<el-select v-model="eventSearchCategory" placeholder="All">
+									<el-option v-for="(cat, index) in eventSearchCategories" :key="cat" :label="cat" :value="index">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :md="6">
 								<label>Date</label>
-								<el-dropdown @command="setEventSearchDate">
-									<el-button>
-										[[ eventSearchDateLabel ]]
-										<i class="el-icon-caret-bottom el-icon--right"></i>
-									</el-button>
-									<el-dropdown-menu slot="dropdown">
-										<el-dropdown-item command="0">All Dates</el-dropdown-item>
-										<el-dropdown-item command="1">Today</el-dropdown-item>
-										<el-dropdown-item command="2">Tomorrow</el-dropdown-item>
-										<el-dropdown-item command="3">This Week</el-dropdown-item>
-										<el-dropdown-item command="4">This Weekend</el-dropdown-item>
-										<el-dropdown-item command="5">Next Week</el-dropdown-item>
-										<el-dropdown-item command="6">Next Month</el-dropdown-item>
-									</el-dropdown-menu>
-								</el-dropdown>
+								<el-select v-model="eventSearchDate" placeholder="All Dates">
+									<el-option label="All Dates" value="0">
+									</el-option>
+									<el-option label="Today" value="1">
+									</el-option>
+									<el-option label="Tomorrow" value="2">
+									</el-option>
+									<el-option label="This Week" value="3">
+									</el-option>
+									<el-option label="This Weekend" value="4">
+									</el-option>
+									<el-option label="Next Week" value="5">
+									</el-option>
+									<el-option label="Next Month" value="6">
+									</el-option>
+								</el-select>
 							</el-col>
 						</el-row>
 					</div>
@@ -160,8 +167,9 @@
 						lost and found
 					</div>
 					<div id="search-panel-search" v-if="searchPanelType === 'search'">
+						<label>Universal Search</label>
 						<el-input
-							placeholder="Search"
+							placeholder="Search anything"
 							icon="search"
 							v-model="searchInput"
 							:on-icon-click="handleSearch"
@@ -171,7 +179,7 @@
 				</div>
 			</transition>
 		</div>
-		<div id="housing-results" v-if="searchPanelType === 'housing'">
+		<div id="housing-results" class="result-container" v-if="searchPanelType === 'housing'">
 			<el-row :gutter="30">
 				<el-col :md="8">
 					<el-card :body-style="{ padding: '0px' }">
@@ -207,6 +215,9 @@
 					</el-card>
 				</el-col>
 			</el-row>
+		</div>
+		<div id="event-results" class="result-container" v-if="searchPanelType === 'event'">
+
 		</div>
 	</div>
 {% endblock %}
