@@ -69,9 +69,9 @@
 						<el-row :gutter="10">
 							<el-col :md="6">
 								<label>Room Type</label>
-								<el-dropdown @command="setHousingRoommate">
+								<el-dropdown @command="setHousingSearchRoommate">
 									<el-button>
-										[[ housingRoommateLabel ]]
+										[[ housingSearchRoommateLabel ]]
 										<i class="el-icon-caret-bottom el-icon--right"></i>
 									</el-button>
 									<el-dropdown-menu slot="dropdown">
@@ -118,12 +118,35 @@
 						</el-input> -->
 					</div>
 					<div id="search-panel-event" v-if="searchPanelType === 'event'">
-						<el-input
-							placeholder="Event Name"
-							v-model="eventSearchInput"
-							icon="search"
-							:on-icon-click="handleEventSearch">
-						</el-input>
+						<el-row :gutter="10">
+							<el-col :md="18">
+								<label>Filter</label>
+								<el-input
+									placeholder="Search events or categories"
+									v-model="eventSearchInput"
+									icon="search"
+									:on-icon-click="handleEventSearch">
+								</el-input>
+							</el-col>
+							<el-col :md="6">
+								<label>Date</label>
+								<el-dropdown @command="setEventSearchDate">
+									<el-button>
+										[[ eventSearchDateLabel ]]
+										<i class="el-icon-caret-bottom el-icon--right"></i>
+									</el-button>
+									<el-dropdown-menu slot="dropdown">
+										<el-dropdown-item command="0">All Dates</el-dropdown-item>
+										<el-dropdown-item command="1">Today</el-dropdown-item>
+										<el-dropdown-item command="2">Tomorrow</el-dropdown-item>
+										<el-dropdown-item command="3">This Week</el-dropdown-item>
+										<el-dropdown-item command="4">This Weekend</el-dropdown-item>
+										<el-dropdown-item command="5">Next Week</el-dropdown-item>
+										<el-dropdown-item command="6">Next Month</el-dropdown-item>
+									</el-dropdown-menu>
+								</el-dropdown>
+							</el-col>
+						</el-row>
 					</div>
 					<div id="search-panel-sale" v-if="searchPanelType === 'sale'">
 						<!-- <el-input

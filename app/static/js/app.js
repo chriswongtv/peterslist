@@ -10,6 +10,7 @@ var main = new Vue({
 		housingRoommate: '0',
 		housingPriceRange: [450, 1250],
 		eventSearchInput: '',
+		eventSearchDate: '0'
 	},
 	delimiters: ['[[',']]'],
 	mounted: function() {
@@ -19,7 +20,7 @@ var main = new Vue({
 
 	},
 	computed: {
-		housingRoommateLabel: function() {
+		housingSearchRoommateLabel: function() {
 			switch (this.housingRoommate) {
 				case '0':
 					return 'All';
@@ -32,6 +33,24 @@ var main = new Vue({
 				case '4':
 					return '4+';
 			}
+		},
+		eventSearchDateLabel: function() {
+			switch (this.eventSearchDate) {
+				case '0':
+					return 'All Dates';
+				case '1':
+					return 'Today';
+				case '2':
+					return 'Tomorrow';
+				case '3':
+					return 'This Week';
+				case '4':
+					return 'This Weekend';
+				case '5':
+					return 'Next Week';
+				case '6':
+					return 'Next Month';
+			}
 		}
 	},
 	methods: {
@@ -41,8 +60,14 @@ var main = new Vue({
 		handleSearch: function() {
 			alert(this.searchInput);
 		},
-		setHousingRoommate: function(option) {
+		setHousingSearchRoommate: function(option) {
 			this.housingRoommate = option;
+		},
+		setEventSearchDate: function(option) {
+			this.eventSearchDate = option;
+		},
+		handleEventSearch: function() {
+			
 		},
 		formatPriceRange: function(val) {
 			if (val == 1500)

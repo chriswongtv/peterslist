@@ -43,6 +43,8 @@ body {
 	font-weight: 500;
 }
 
+/* Search */
+
 #search-panel {
 	width: 50%;
 	margin-left: auto;
@@ -100,7 +102,6 @@ body {
 	position: relative;
 	margin-top: 2.5%;
 	padding: 5% 0;
-	text-align: center;
 }
 
 .search-panel-options-enter-active, .search-panel-options-leave-active {
@@ -130,6 +131,11 @@ label {
 	display: inline-block;
 }
 
+/* Housing */
+#search-panel-house {
+	text-align: center;
+}
+
 #search-panel-house .el-col+.el-col+.el-col+.el-col {
 	margin-top: 10px;
 }
@@ -157,6 +163,8 @@ label {
 	padding-top: 30px;
 }
 
+/* Card */
+
 .el-card img {
 	max-height: 200px;
 	min-width: 100%;
@@ -165,4 +173,13 @@ label {
 .bottom {
 	font-size: 13px;
 	color: #999;
+}
+
+/* Event */
+#search-panel-event .el-dropdown, #search-panel-event button {
+	width: 100%;
+}
+
+#search-panel-event label {
+	margin-left: 2px;
 }
