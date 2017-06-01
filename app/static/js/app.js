@@ -9,7 +9,7 @@ var main = new Vue({
 			housingOptions: ['Parking', 'Private bathroom', 'Pets allowed'],
 			housingCheckbox: [],
 			housingSearchRoommate: '0',
-			housingPriceRange: [450, 1250],
+			housingPriceRange: [450, 1250]
 		},
 		housingSearchResults: '',
 		eventSearchInput: '',
@@ -46,7 +46,16 @@ var main = new Vue({
 			if (val === 'housing')
 				this.searchHousing();
 		},
-		housingSearchOptions: function() {
+		'housingSearchOptions.housingDateStart': function() {
+			this.searchHousing();
+		},
+		'housingSearchOptions.housingCheckbox': function() {
+			this.searchHousing();
+		},
+		'housingSearchOptions.housingSearchRoommate': function() {
+			this.searchHousing();
+		},
+		'housingSearchOptions.housingPriceRange': function() {
 			this.searchHousing();
 		}
 	},
@@ -85,18 +94,47 @@ var main = new Vue({
 			var params = {}
 			params.type = 'Housing'
 
-			// switch (this.housingSearchRoommate) {
-			// 	case '1':
-			// 		params.
-			// }
+			switch (this.housingSearchOptions.housingSearchRoommate) {
+				case '1':
+					params.roommates = 0;
+					break;
+				case '2':
+					params.roommates = 1;
+					break;
+				case '3':
+					params.roommates = 2;
+					break;
+				case '4':
+					params.roommates = 3;
+					break;
+				default:
+			}
 
+			params.start_price = this.housingSearchOptions.housingPriceRange[0];
 
+			if (this.housingSearchOptions.housingPriceRange[1] < 1500)
+				params.end_price = this.housingSearchOptions.housingPriceRange[1];
+
+			params.movein_date = this.housingSearchOptions.housingDateStart;
+
+			if (this.housingSearchOptions.housingCheckbox.indexOf("Parking") !== -1)
+				params.parking = true;
+
+			if (this.housingSearchOptions.housingCheckbox.indexOf("Private bathroom") !== -1)
+				params.bathroom = true;
+
+			if (this.housingSearchOptions.housingCheckbox.indexOf("Pets allowed") !== -1)
+				params.pets = true;
 
 			axios.get('/api/search', {
 				params: params
 			}).then(res => {
-				this.housingSearchResults = res.data.results;
+				this.housingSearchResults = res.data;
 			})
 		}
 	}
+});
+
+var listing = new Vue({
+	el: '#listing',
 });

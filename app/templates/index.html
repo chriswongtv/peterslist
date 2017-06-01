@@ -201,11 +201,11 @@
 			<el-row :gutter="30">
 				<el-col :md="8" v-for="item in housingSearchResults" :key="item.postID">
 					<el-card :body-style="{ padding: '0px' }">
-						<a :href="'/listing/' + item.postID">
+						<a :href="'/housing/' + item.postID">
 							<img src="https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=" class="image">
 						</a>
 						<div class="card-details">
-							<a :href="'/listing/' + item.postID">[[ item.localityName ]]</a>
+							<a :href="'/housing/' + item.postID">[[ item.localityName ]]</a>
 							<div class="bottom">
 							Available [[ formatDate(item.startDate) ]] for $[[ item.postInfo.amount ]]/month
 							</div>
