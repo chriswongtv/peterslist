@@ -11,15 +11,43 @@ def show_index():
 
 @app.route('/api/search')
 def search():
-	# post_type = request.form['type']
-	# search_keyword = request.form['keyword']
-	# search_filters = request.form['filters']
-	organization_name = request.args.get('org_name')
+	post_type = request.args.get('type')
+	search_keyword = request.args.get('keyword')
+	search_filters = request.args.get('room_type')
+	
+	#organization_name = request.args.get('org_name')
 
 	# TODO: Perform search query and return result as JSON
 	url = "http://localhost:19002/query/service"
+        if post_type !='u':
+                payload = "statement=USE PeterList; SELECT VALUE p FROM Postings p WHERE p.postingCategory = '" + post_type + "'"
+        else:
+                payload = "statement=USE PeterList; SELECT VALUE p FROM Postings p;"
 
-	payload = "statement=USE PeterCraigList; SELECT VALUE p FROM Postings p WHERE p.organizationName = '" + organization_name + "';"
+        # handles code for housing
+        if post_type == 'Housing':
+                room_type = request.args.get('room_type')
+                start_price = request.args.get('start_price')
+                end_price = request.args.get('end_price')
+                movein_date = request.args.get('movein_date')
+                parking = request.args.get('parking')
+                bathroom = request.args.get('bathroom')
+                pets = request.args.get('pets')
+
+
+                if (room_type is not None ):
+                        payload += ' and p.housingCategory =' + room_type
+                if (start_price is not None ):
+                        payload += ' and p.postInfo.amount>=' + start_price
+                if (end_price is not None ):
+                        payload += ' and p.postInfo.amount<=' + end_price
+                if (parking is not None ):
+                        payload += ' and p.hasParking = ' + parking
+                if (bathroom is not None ):
+                        payload += ' and p.bathroomType = ' + bathroom
+                if (pets is not None ):
+                        payload += ' and p.petAllowed = ' + pets
+        
 	headers = {
 		'content-type': "application/x-www-form-urlencoded",
 		'cache-control': "no-cache"
