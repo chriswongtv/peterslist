@@ -1,6 +1,15 @@
 ELEMENT.locale(ELEMENT.lang.en)
 
+const housingSearchPanel = {
+	template: ''
+}
+
+const router = new VueRouter({
+	routes: [{ path: '/housing', name: 'housing', component: housingSearchPanel }]
+})
+
 var main = new Vue({
+	router,
 	el: '#main',
 	data: {
 		searchPanelType: '',
@@ -39,7 +48,10 @@ var main = new Vue({
 	},
 	delimiters: ['[[',']]'],
 	mounted: function() {
+		this.searchPanelType = router.currentRoute.path.substring(1)
 
+		if (this.searchPanelType === 'housing')
+			this.loadHousingOptions();
 	},
 	watch: {
 		searchPanelType: function(val) {
@@ -47,15 +59,53 @@ var main = new Vue({
 				this.searchHousing();
 		},
 		'housingSearchOptions.housingDateStart': function() {
+			var query = this.getQueryString();
+
+			query.date = this.housingSearchOptions.housingDateStart.toLocaleDateString();
+
+			router.replace({ query: query })
+
 			this.searchHousing();
 		},
 		'housingSearchOptions.housingCheckbox': function() {
+			var query = this.getQueryString();
+
+			if (this.housingSearchOptions.housingCheckbox.indexOf('Parking') !== -1)
+				query.parking = 1;
+			else
+				delete query.parking;
+
+			if (this.housingSearchOptions.housingCheckbox.indexOf('Private bathroom') !== -1)
+				query.bath = 1;
+			else
+				delete query.bath;
+
+			if (this.housingSearchOptions.housingCheckbox.indexOf('Pets allowed') !== -1)
+				query.pets = 1;
+			else
+				delete query.pets;
+
+			router.replace({ query: query })
+
 			this.searchHousing();
 		},
 		'housingSearchOptions.housingSearchRoommate': function() {
+			var query = this.getQueryString();
+
+			query.rm = this.housingSearchOptions.housingSearchRoommate;
+
+			router.replace({ query: query })
+
 			this.searchHousing();
 		},
 		'housingSearchOptions.housingPriceRange': function() {
+			var query = this.getQueryString();
+
+			query.sp = this.housingSearchOptions.housingPriceRange[0];
+			query.ep = this.housingSearchOptions.housingPriceRange[1];
+
+			router.replace({ query: query })
+
 			this.searchHousing();
 		}
 	},
@@ -89,6 +139,34 @@ var main = new Vue({
 				return 'now';
 			else
 				return month[date.getMonth()] + ' ' + date.getDate();
+		},
+		getQueryString: function() {
+			var query = router.currentRoute.query;
+			var p = {}
+
+			for (q in query) {
+				p[q] = query[q];
+			}
+
+			return p;
+		},
+		loadHousingOptions: function() {
+			for (q in router.currentRoute.query) {
+				if (q === 'date')
+					this.housingSearchOptions.housingDateStart = new Date(router.currentRoute.query[q]);
+				else if (q === 'rm')
+					this.housingSearchOptions.housingSearchRoommate = router.currentRoute.query[q];
+				else if (q === 'sp')
+					this.housingSearchOptions.housingPriceRange[0] = router.currentRoute.query[q];
+				else if (q === 'ep')
+					this.housingSearchOptions.housingPriceRange[1] = router.currentRoute.query[q];
+				else if (q === 'parking')
+					this.housingSearchOptions.housingCheckbox.push('Parking');
+				else if (q === 'bath')
+					this.housingSearchOptions.housingCheckbox.push('Private bathroom');
+				else if (q === 'pets')
+					this.housingSearchOptions.housingCheckbox.push('Pets allowed');
+			}
 		},
 		searchHousing: function() {
 			var params = {}
@@ -133,8 +211,4 @@ var main = new Vue({
 			})
 		}
 	}
-});
-
-var listing = new Vue({
-	el: '#listing',
-});
+}).$mount('#main')

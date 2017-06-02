@@ -8,12 +8,14 @@
 			<div id="search-panel-icons">
 				<el-row :gutter="10">
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('housing')"
-								:class="{ active: searchPanelType === 'housing' }">
-							<!-- House by hans draiman from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/housing.svg') }}">
-						</div>
+						<router-link to="/housing">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('housing')"
+									:class="{ active: searchPanelType === 'housing' }">
+								<!-- House by hans draiman from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/housing.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">HOUSING</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
@@ -251,4 +253,7 @@
 
 		</div>
 	</div>
+{% endblock %}
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
