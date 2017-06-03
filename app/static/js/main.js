@@ -1,11 +1,14 @@
 ELEMENT.locale(ELEMENT.lang.en)
 
-const housingSearchPanel = {
-	template: ''
-}
-
 const router = new VueRouter({
-	routes: [{ path: '/housing', name: 'housing', component: housingSearchPanel }]
+	routes: [
+		{ path: '/housing' },
+		{ path: '/job' },
+		{ path: '/event' },
+		{ path: '/sale' },
+		{ path: '/lostandfound' },
+		{ path: '/search' }
+	]
 })
 
 var main = new Vue({
@@ -13,6 +16,8 @@ var main = new Vue({
 	el: '#main',
 	data: {
 		searchPanelType: '',
+		timeout: null,
+		urlQueries: {},
 		housingSearchOptions: {
 			housingDateStart: new Date(),
 			housingOptions: ['Parking', 'Private bathroom', 'Pets allowed'],
@@ -99,14 +104,18 @@ var main = new Vue({
 			this.searchHousing();
 		},
 		'housingSearchOptions.housingPriceRange': function() {
-			var query = this.getQueryString();
+			clearTimeout(this.timeout);
 
-			query.sp = this.housingSearchOptions.housingPriceRange[0];
-			query.ep = this.housingSearchOptions.housingPriceRange[1];
+			this.timeout = setTimeout(() => {
+				var query = this.getQueryString();
 
-			router.replace({ query: query })
+				query.sp = this.housingSearchOptions.housingPriceRange[0];
+				query.ep = this.housingSearchOptions.housingPriceRange[1];
 
-			this.searchHousing();
+				router.replace({ query: query })
+
+				this.searchHousing();
+			}, 500)
 		}
 	},
 	computed: {
@@ -212,3 +221,13 @@ var main = new Vue({
 		}
 	}
 }).$mount('#main')
+
+router.beforeEach((to, from, next) => {
+	// Save "from" queries
+	main.urlQueries[from.path.substring(1)] = from.query;
+	// If "to" doesn't have queries, check for existence
+	if (Object.keys(to.query).length === 0 && to.query.constructor === Object && main.urlQueries[to.path.substring(1)]) {
+		to.query = main.urlQueries[to.path.substring(1)];
+	}
+	next();
+})

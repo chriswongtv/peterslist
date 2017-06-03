@@ -19,48 +19,58 @@
 						<span class="search-panel-label">HOUSING</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('job')"
-								:class="{ active: searchPanelType === 'job' }">
-							<!-- Briefcase by mikicon from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/job.svg') }}">
-						</div>
+						<router-link to="/job">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('job')"
+									:class="{ active: searchPanelType === 'job' }">
+								<!-- Briefcase by mikicon from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/job.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">JOB</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('event')"
-								:class="{ active: searchPanelType === 'event' }">
-							<!-- Ticket by Awesome from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/event.svg') }}">
-						</div>
+						<router-link to="/event">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('event')"
+									:class="{ active: searchPanelType === 'event' }">
+								<!-- Ticket by Awesome from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/event.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">EVENT</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('sale')"
-								:class="{ active: searchPanelType === 'sale' }">
-							<!-- sales tag by Mihail Zhukov from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/sale.svg') }}">
-						</div>
+						<router-link to="/sale">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('sale')"
+									:class="{ active: searchPanelType === 'sale' }">
+								<!-- sales tag by Mihail Zhukov from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/sale.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">ITEM SALE</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('lostandfound')"
-								:class="{ active: searchPanelType === 'lostandfound' }">
-							<!-- Heart by Lorena Salagre from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/romance.svg') }}">
-						</div>
+						<router-link to="/lostandfound">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('lostandfound')"
+									:class="{ active: searchPanelType === 'lostandfound' }">
+								<!-- Heart by Lorena Salagre from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/romance.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">LOST+FOUND</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('search')"
-								:class="{ active: searchPanelType === 'search' }">
-							<!-- Search by Deepz from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/search.svg') }}">
-						</div>
+						<router-link to="/search">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('search')"
+									:class="{ active: searchPanelType === 'search' }">
+								<!-- Search by Deepz from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/search.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">SEARCH</span>
 					</el-col>
 				</el-row>
