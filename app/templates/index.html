@@ -121,12 +121,32 @@
 						</el-row>
 					</div>
 					<div id="search-panel-job" v-if="searchPanelType === 'job'">
-						<!-- <el-input
-							placeholder="Search for Jobs"
-							icon="search"
-							v-model="searchInput"
-							:on-icon-click="handleSearch">
-						</el-input> -->
+						<el-row :gutter="10">
+							<el-col :md="6">
+								<label>Category</label>
+								<el-select v-model="jobSearchOptions.jobSearchCategory" placeholder="All">
+									<el-option v-for="(cat, index) in jobSearchOptions.jobSearchCategories" :key="cat" :label="cat" :value="index">
+								</el-select>
+							</el-col>
+							<el-col :md="12">
+								<label>Job Title</label>
+								<el-input
+									placeholder="Web Developer"
+									icon="search"
+									v-model="jobSearchOptions.jobSearchTitleInput"
+									:on-icon-click="searchJob">
+								</el-input>
+							</el-col>
+							<el-col :md="6">
+								<label>Location</label>
+								<el-input
+									placeholder="Irvine, CA"
+									icon="search"
+									v-model="jobSearchOptions.jobSearchLocationInput"
+									:on-icon-click="searchJob">
+								</el-input>
+							</el-col>
+						</el-row>
 					</div>
 					<div id="search-panel-event" v-if="searchPanelType === 'event'">
 						<el-row :gutter="10">
@@ -134,21 +154,21 @@
 								<label>Filter</label>
 								<el-input
 									placeholder="Search events or categories"
-									v-model="eventSearchInput"
+									v-model="eventSearchOptions.eventSearchInput"
 									icon="search"
-									:on-icon-click="handleEventSearch">
+									:on-icon-click="searchEvent">
 								</el-input>
 							</el-col>
 							<el-col :md="6">
 								<label>Category</label>
-								<el-select v-model="eventSearchCategory" placeholder="All">
-									<el-option v-for="(cat, index) in eventSearchCategories" :key="cat" :label="cat" :value="index">
+								<el-select v-model="eventSearchOptions.eventSearchCategory" placeholder="All">
+									<el-option v-for="(cat, index) in eventSearchOptions.eventSearchCategories" :key="cat" :label="cat" :value="index">
 									</el-option>
 								</el-select>
 							</el-col>
 							<el-col :md="6">
 								<label>Date</label>
-								<el-select v-model="eventSearchDate" placeholder="All Dates">
+								<el-select v-model="eventSearchOptions.eventSearchDate" placeholder="All Dates">
 									<el-option label="All Dates" value="0">
 									</el-option>
 									<el-option label="Today" value="1">
@@ -168,18 +188,30 @@
 						</el-row>
 					</div>
 					<div id="search-panel-sale" v-if="searchPanelType === 'sale'">
-						<!-- <el-input
-							placeholder="Search for Item"
-							icon="search"
-							v-model="searchInput"
-							:on-icon-click="handleSearch">
-						</el-input> -->
+						<el-row :gutter="10">
+							<el-col :md="8">
+								<label>Category</label>
+								<el-select v-model="itemSaleSearchOptions.itemSaleSearchCategory" placeholder="All">
+									<el-option v-for="(cat, index) in itemSaleSearchOptions.itemSaleSearchCategories" :key="cat" :label="cat" :value="index">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :md="16">
+								<label>Keyword</label>
+								<el-input
+									placeholder="Search for item"
+									icon="search"
+									v-model="searchInput"
+									:on-icon-click="searchItemSale">
+								</el-input>
+							</el-col>
+						</el-row>
 					</div>
 					<div id="search-panel-lost-and-found" v-if="searchPanelType === 'lostandfound'">
 						<el-row :gutter="10">
 							<el-col :md="7">
 								<label>Filter</label>
-								<el-radio-group v-model="lostFoundSwitch">
+								<el-radio-group v-model="lostAndFoundSearchOptions.lostFoundSwitch">
 									<el-radio-button label="I lost"></el-radio-button>
 									<el-radio-button label="I found"></el-radio-button>
 								</el-radio-group>
@@ -189,9 +221,9 @@
 								<el-input
 								placeholder="Search item or location"
 								icon="search"
-								v-model="lostFoundSearchInput"
-								:on-icon-click="handleSearch"
-								@keyup.enter="handleSearch">
+								v-model="lostAndFoundSearchOptions.lostFoundSearchInput"
+								:on-icon-click="searchLostAndFound"
+								@keyup.enter="searchLostAndFound">
 							</el-input>
 							</el-col>
 						</el-row>
@@ -201,9 +233,9 @@
 						<el-input
 							placeholder="Search anything"
 							icon="search"
-							v-model="searchInput"
-							:on-icon-click="handleSearch"
-							@keyup.enter="handleSearch">
+							v-model="globalSearchInput"
+							:on-icon-click="searchAll"
+							@keyup.enter="searchAll">
 						</el-input>
 					</div>
 				</div>
