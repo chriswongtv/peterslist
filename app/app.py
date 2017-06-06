@@ -86,6 +86,14 @@ def asterixSearch(args):
 
 	if (post_type == 'Housing'):
 		payload = getAsterixHousingSearchPayload(args, payload)
+	if (post_type == 'Job'):
+		payload = getAsterixJobSearchPayload(args, payload)
+	if (post_type == 'Event'):
+		payload = getAsterixEventSearchPayload(args, payload)
+	if (post_type == 'ItemSale'):
+		payload = getAsterixItemSaleSearchPayload(args, payload)
+	if (post_type == 'LostFound'):
+		payload = getAsterixLostAndFoundSearchPayload(args, payload)
 
 	return queryAsterix(payload)
 
@@ -118,6 +126,85 @@ def getAsterixHousingSearchPayload(args, payload):
 			payload += ' and p.roomates > ' + 3
 		else:
 			payload += ' and p.roomates = ' + roommates
+
+	payload += ';'
+
+	return payload
+
+def getAsterixJobSearchPayload(args, payload):
+
+	category = args.get('category')
+	title = args.get('title')
+	location = args.get('location')
+	
+
+	# if (category is not None):
+	# 	payload += ' and p.jobCategory =' + category
+
+	#USE one character off in ASTERIX DB
+	# if (title is not None):
+	# 	payload += ' and p.postInfo.amount>=' + title
+	# if (location is not None):
+	# 	payload += ' and p.postInfo.amount<=' + location
+	
+
+	payload += ';'
+
+	return payload
+
+def getAsterixEventSearchPayload(args, payload):
+
+	category = args.get('category')
+	name = args.get('name')
+	date = args.get('date')
+	
+
+	# if (category is not None):
+	# 	payload += ' and p.jobCategory =' + category
+
+	#USE one character off in ASTERIX DB
+	# if (title is not None):
+	# 	payload += ' and p.postInfo.amount>=' + title
+	# if (location is not None):
+	# 	payload += ' and p.postInfo.amount<=' + location
+	
+
+	payload += ';'
+
+	return payload
+
+def getAsterixItemSaleSearchPayload(args, payload):
+
+	category = args.get('category')
+	keyword = args.get('keyword')
+	
+	# if (category is not None):
+	# 	payload += ' and p.jobCategory =' + category
+
+	#USE one character off in ASTERIX DB
+	# if (title is not None):
+	# 	payload += ' and p.postInfo.amount>=' + title
+	# if (location is not None):
+	# 	payload += ' and p.postInfo.amount<=' + location
+	
+
+	payload += ';'
+
+	return payload
+
+def getAsterixLostAndFoundSearchPayload(args, payload):
+
+	
+	keyword = args.get('keyword')
+	query = args.get('query') 	# 0 means lost and 1 means found
+	
+	if (query is not None):
+		payload += ' and p.lostOrFound = ' + query
+
+	if(keyword is not None):
+		payload += ' and p.itemName = "' + keyword + '"'
+
+	
 
 	payload += ';'
 
