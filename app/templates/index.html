@@ -8,57 +8,69 @@
 			<div id="search-panel-icons">
 				<el-row :gutter="10">
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('housing')"
-								:class="{ active: searchPanelType === 'housing' }">
-							<!-- House by hans draiman from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/housing.svg') }}">
-						</div>
+						<router-link to="/housing">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('housing')"
+									:class="{ active: searchPanelType === 'housing' }">
+								<!-- House by hans draiman from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/housing.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">HOUSING</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('job')"
-								:class="{ active: searchPanelType === 'job' }">
-							<!-- Briefcase by mikicon from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/job.svg') }}">
-						</div>
+						<router-link to="/job">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('job')"
+									:class="{ active: searchPanelType === 'job' }">
+								<!-- Briefcase by mikicon from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/job.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">JOB</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('event')"
-								:class="{ active: searchPanelType === 'event' }">
-							<!-- Ticket by Awesome from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/event.svg') }}">
-						</div>
+						<router-link to="/event">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('event')"
+									:class="{ active: searchPanelType === 'event' }">
+								<!-- Ticket by Awesome from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/event.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">EVENT</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('sale')"
-								:class="{ active: searchPanelType === 'sale' }">
-							<!-- sales tag by Mihail Zhukov from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/sale.svg') }}">
-						</div>
+						<router-link to="/sale">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('sale')"
+									:class="{ active: searchPanelType === 'sale' }">
+								<!-- sales tag by Mihail Zhukov from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/sale.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">ITEM SALE</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('lostandfound')"
-								:class="{ active: searchPanelType === 'lostandfound' }">
-							<!-- Heart by Lorena Salagre from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/romance.svg') }}">
-						</div>
+						<router-link to="/lostandfound">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('lostandfound')"
+									:class="{ active: searchPanelType === 'lostandfound' }">
+								<!-- Heart by Lorena Salagre from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/romance.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">LOST+FOUND</span>
 					</el-col>
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
-						<div class="search-panel-icon"
-								v-on:click="showSearchPanel('search')"
-								:class="{ active: searchPanelType === 'search' }">
-							<!-- Search by Deepz from the Noun Project -->
-							<img src="{{ url_for('static', filename='img/search.svg') }}">
-						</div>
+						<router-link to="/search">
+							<div class="search-panel-icon"
+									v-on:click="showSearchPanel('search')"
+									:class="{ active: searchPanelType === 'search' }">
+								<!-- Search by Deepz from the Noun Project -->
+								<img src="{{ url_for('static', filename='img/search.svg') }}">
+							</div>
+						</router-link>
 						<span class="search-panel-label">SEARCH</span>
 					</el-col>
 				</el-row>
@@ -69,7 +81,7 @@
 						<el-row :gutter="10">
 							<el-col :md="6">
 								<label>Room Type</label>
-								<el-select v-model="housingSearchRoommate" placeholder="All Rooms">
+								<el-select v-model="housingSearchOptions.housingSearchRoommate" placeholder="All Rooms">
 									<el-option label="All Rooms" value="0">
 									</el-option>
 									<el-option label="Single Room" value="1">
@@ -85,7 +97,7 @@
 							<el-col :md="12" id="housing-price">
 								<label>Price Range</label>
 								<el-slider
-									v-model="housingPriceRange"
+									v-model="housingSearchOptions.housingPriceRange"
 									range
 									:min="200"
 									:max="1500"
@@ -95,26 +107,46 @@
 							<el-col :md="6">
 								<label>Move-In Date</label>
 								<el-date-picker
-									v-model="housingDateStart"
+									v-model="housingSearchOptions.housingDateStart"
 									type="date"
 									placeholder="Move-in Date">
 								</el-date-picker>
 							</el-col>
 							<el-col :md="24">
 								<label>Additional Filters</label>
-								<el-checkbox-group v-model="housingCheckbox">
-									<el-checkbox-button v-for="option in housingOptions" :label="option" :key="option">[[option]]</el-checkbox-button>
+								<el-checkbox-group v-model="housingSearchOptions.housingCheckbox">
+									<el-checkbox-button v-for="option in housingSearchOptions.housingOptions" :label="option" :key="option">[[option]]</el-checkbox-button>
 								</el-checkbox-group>
 							</el-col>
 						</el-row>
 					</div>
 					<div id="search-panel-job" v-if="searchPanelType === 'job'">
-						<!-- <el-input
-							placeholder="Search for Jobs"
-							icon="search"
-							v-model="searchInput"
-							:on-icon-click="handleSearch">
-						</el-input> -->
+						<el-row :gutter="10">
+							<el-col :md="6">
+								<label>Category</label>
+								<el-select v-model="jobSearchOptions.jobSearchCategory" placeholder="All">
+									<el-option v-for="(cat, index) in jobSearchOptions.jobSearchCategories" :key="cat" :label="cat" :value="index">
+								</el-select>
+							</el-col>
+							<el-col :md="12">
+								<label>Job Title</label>
+								<el-input
+									placeholder="Web Developer"
+									icon="search"
+									v-model="jobSearchOptions.jobSearchTitleInput"
+									:on-icon-click="searchJob">
+								</el-input>
+							</el-col>
+							<el-col :md="6">
+								<label>Location</label>
+								<el-input
+									placeholder="Irvine, CA"
+									icon="search"
+									v-model="jobSearchOptions.jobSearchLocationInput"
+									:on-icon-click="searchJob">
+								</el-input>
+							</el-col>
+						</el-row>
 					</div>
 					<div id="search-panel-event" v-if="searchPanelType === 'event'">
 						<el-row :gutter="10">
@@ -122,21 +154,21 @@
 								<label>Filter</label>
 								<el-input
 									placeholder="Search events or categories"
-									v-model="eventSearchInput"
+									v-model="eventSearchOptions.eventSearchInput"
 									icon="search"
-									:on-icon-click="handleEventSearch">
+									:on-icon-click="searchEvent">
 								</el-input>
 							</el-col>
 							<el-col :md="6">
 								<label>Category</label>
-								<el-select v-model="eventSearchCategory" placeholder="All">
-									<el-option v-for="(cat, index) in eventSearchCategories" :key="cat" :label="cat" :value="index">
+								<el-select v-model="eventSearchOptions.eventSearchCategory" placeholder="All">
+									<el-option v-for="(cat, index) in eventSearchOptions.eventSearchCategories" :key="cat" :label="cat" :value="index">
 									</el-option>
 								</el-select>
 							</el-col>
 							<el-col :md="6">
 								<label>Date</label>
-								<el-select v-model="eventSearchDate" placeholder="All Dates">
+								<el-select v-model="eventSearchOptions.eventSearchDate" placeholder="All Dates">
 									<el-option label="All Dates" value="0">
 									</el-option>
 									<el-option label="Today" value="1">
@@ -156,24 +188,54 @@
 						</el-row>
 					</div>
 					<div id="search-panel-sale" v-if="searchPanelType === 'sale'">
-						<!-- <el-input
-							placeholder="Search for Item"
-							icon="search"
-							v-model="searchInput"
-							:on-icon-click="handleSearch">
-						</el-input> -->
+						<el-row :gutter="10">
+							<el-col :md="8">
+								<label>Category</label>
+								<el-select v-model="itemSaleSearchOptions.itemSaleSearchCategory" placeholder="All">
+									<el-option v-for="(cat, index) in itemSaleSearchOptions.itemSaleSearchCategories" :key="cat" :label="cat" :value="index">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :md="16">
+								<label>Keyword</label>
+								<el-input
+									placeholder="Search for item"
+									icon="search"
+									v-model="searchInput"
+									:on-icon-click="searchItemSale">
+								</el-input>
+							</el-col>
+						</el-row>
 					</div>
 					<div id="search-panel-lost-and-found" v-if="searchPanelType === 'lostandfound'">
-						lost and found
+						<el-row :gutter="10">
+							<el-col :md="7">
+								<label>Filter</label>
+								<el-radio-group v-model="lostAndFoundSearchOptions.lostFoundSwitch">
+									<el-radio-button label="I lost"></el-radio-button>
+									<el-radio-button label="I found"></el-radio-button>
+								</el-radio-group>
+							</el-col>
+							<el-col :md="17">
+								<label>Keyword</label>
+								<el-input
+								placeholder="Search item or location"
+								icon="search"
+								v-model="lostAndFoundSearchOptions.lostFoundSearchInput"
+								:on-icon-click="searchLostAndFound"
+								@keyup.enter="searchLostAndFound">
+							</el-input>
+							</el-col>
+						</el-row>
 					</div>
 					<div id="search-panel-search" v-if="searchPanelType === 'search'">
 						<label>Universal Search</label>
 						<el-input
 							placeholder="Search anything"
 							icon="search"
-							v-model="searchInput"
-							:on-icon-click="handleSearch"
-							@keyup.enter="handleSearch">
+							v-model="globalSearchInput"
+							:on-icon-click="searchAll"
+							@keyup.enter="searchAll">
 						</el-input>
 					</div>
 				</div>
@@ -181,7 +243,20 @@
 		</div>
 		<div id="housing-results" class="result-container" v-if="searchPanelType === 'housing'">
 			<el-row :gutter="30">
-				<el-col :md="8">
+				<el-col :md="8" v-for="item in housingSearchResults" :key="item.postID">
+					<el-card :body-style="{ padding: '0px' }">
+						<a :href="'/housing/' + item.postID">
+							<img src="https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=" class="image">
+						</a>
+						<div class="card-details">
+							<a :href="'/housing/' + item.postID">[[ item.localityName ]]</a>
+							<div class="bottom">
+							Available [[ formatDate(item.startDate) ]] for $[[ item.postInfo.amount ]]/month
+							</div>
+						</div>
+					</el-card>
+				</el-col>
+				<!-- <el-col :md="8">
 					<el-card :body-style="{ padding: '0px' }">
 						<img src="https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=" class="image">
 						<div style="padding: 14px;">
@@ -213,11 +288,14 @@
 							</div>
 						</div>
 					</el-card>
-				</el-col>
+				</el-col> -->
 			</el-row>
 		</div>
 		<div id="event-results" class="result-container" v-if="searchPanelType === 'event'">
 
 		</div>
 	</div>
+{% endblock %}
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

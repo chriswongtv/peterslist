@@ -3,7 +3,10 @@ from flask import render_template
 from flask import request
 from flask import make_response
 import requests
+import json
 app = Flask(__name__)
+
+DB = 1 # 1 = AsterixDB, 0 = Couchbase
 
 @app.route('/')
 def show_index():
@@ -11,56 +14,12 @@ def show_index():
 
 @app.route('/api/search')
 def search():
-	post_type = request.args.get('type')
-	search_keyword = request.args.get('keyword')
-	search_filters = request.args.get('room_type')
-	
-	#organization_name = request.args.get('org_name')
+	if (DB):
+		return asterixSearch(request.args)
 
-	# TODO: Perform search query and return result as JSON
-	url = "http://localhost:19002/query/service"
-        if post_type !='u':
-                payload = "statement=USE PeterList; SELECT VALUE p FROM Postings p WHERE p.postingCategory = '" + post_type + "'"
-        else:
-                payload = "statement=USE PeterList; SELECT VALUE p FROM Postings p;"
-
-        # handles code for housing
-        if post_type == 'Housing':
-                room_type = request.args.get('room_type')
-                start_price = request.args.get('start_price')
-                end_price = request.args.get('end_price')
-                movein_date = request.args.get('movein_date')
-                parking = request.args.get('parking')
-                bathroom = request.args.get('bathroom')
-                pets = request.args.get('pets')
-
-
-                if (room_type is not None ):
-                        payload += ' and p.housingCategory =' + room_type
-                if (start_price is not None ):
-                        payload += ' and p.postInfo.amount>=' + start_price
-                if (end_price is not None ):
-                        payload += ' and p.postInfo.amount<=' + end_price
-                if (parking is not None ):
-                        payload += ' and p.hasParking = ' + parking
-                if (bathroom is not None ):
-                        payload += ' and p.bathroomType = ' + bathroom
-                if (pets is not None ):
-                        payload += ' and p.petAllowed = ' + pets
-        
-	headers = {
-		'content-type': "application/x-www-form-urlencoded",
-		'cache-control': "no-cache"
-	}
-
-	response = requests.request("POST", url, data=payload, headers=headers)
-
-	return response.text
-
-@app.route('/<post_type>/<int:post_id>')
-def show_listing(post_type, post_id):
-	# TODO: Pull listing details from db and render the listing detail page
-	return render_template('listing.html')
+@app.route('/housing/<post_id>')
+def show_housing(post_id):
+	return render_template('housing.html', info=json.loads(getListingInfo(post_id)))
 
 @app.route('/signup')
 def show_sign_up():
@@ -116,6 +75,70 @@ def get_user():
 	uid = request.form['uid']
 	# Return user info as JSON
 	return
+
+def asterixSearch(args):
+	post_type = args.get('type')
+
+	if (post_type == 'u'):
+		payload = 'SELECT VALUE p FROM Postings p;'
+	else:
+		payload = 'SELECT VALUE p FROM Postings p WHERE p.postingCategory = "' + post_type + '"'
+
+	if (post_type == 'Housing'):
+		payload = getAsterixHousingSearchPayload(args, payload)
+
+	return queryAsterix(payload)
+
+def getAsterixHousingSearchPayload(args, payload):
+	room_type = args.get('room_type')
+	start_price = args.get('start_price')
+	end_price = args.get('end_price')
+	movein_date = args.get('movein_date')
+	parking = args.get('parking')
+	bathroom = args.get('bathroom')
+	pets = args.get('pets')
+	roommates = args.get('roommates')
+
+	if (room_type is not None):
+		payload += ' and p.housingCategory =' + room_type
+	if (start_price is not None):
+		payload += ' and p.postInfo.amount>=' + start_price
+	if (end_price is not None):
+		payload += ' and p.postInfo.amount<=' + end_price
+	# if (movein_date is not None):
+		# TODO: Add move in date filter
+	if (parking is not None):
+		payload += ' and p.hasParking = ' + parking
+	if (bathroom is not None):
+		payload += ' and p.bathroomType = ' + bathroom
+	if (pets is not None):
+		payload += ' and p.petAllowed = ' + pets
+	if (roommates is not None):
+		if (roommates == 3):
+			payload += ' and p.roomates > ' + 3
+		else:
+			payload += ' and p.roomates = ' + roommates
+
+	payload += ';'
+
+	return payload
+
+def queryAsterix(query):
+	url = "http://localhost:19002/query/service"
+
+	headers = {
+		'content-type': "application/x-www-form-urlencoded",
+		'cache-control': "no-cache"
+	}
+
+	payload = 'statement=USE PeterList; ' + query
+
+	response = requests.request("POST", url, data=payload, headers=headers)
+
+	return json.dumps(json.loads(response.text)['results'])
+
+def getListingInfo(id):
+	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
 
 if __name__ == '__main__':
 	app.run()

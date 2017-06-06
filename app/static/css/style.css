@@ -13,6 +13,11 @@ body {
 	align-items: center;
 }
 
+.center-left {
+	display: flex;
+	align-items: center;
+}
+
 #main {
 	background-image: url('../img/bg.jpg');
 	background-size: cover;
@@ -37,6 +42,7 @@ body {
 	font-weight: 300;
 	font-size: 2em;
 	letter-spacing: 0.005em;
+	text-decoration: none;
 }
 
 #logo>span {
@@ -44,7 +50,6 @@ body {
 }
 
 /* Search */
-
 #search-panel {
 	width: 50%;
 	margin-left: auto;
@@ -131,6 +136,10 @@ label {
 	display: inline-block;
 }
 
+#search-panel-options label {
+	margin-left: 2px;
+}
+
 /* Results Global */
 .result-container {
 	position: relative;
@@ -149,14 +158,31 @@ label {
 	min-width: 100%;
 }
 
+.el-card a {
+	text-decoration: none;
+	color: initial;
+}
+
+.el-card a:hover {
+	cursor: pointer;
+}
+
 .bottom {
 	font-size: 13px;
 	color: #999;
 }
 
+.card-details {
+	padding: 10px 14px 14px 14px;
+}
+
 /* Housing */
 #search-panel-house {
 	text-align: center;
+}
+
+#search-panel-house label {
+	margin-left: 0;
 }
 
 #search-panel-house .el-col+.el-col+.el-col+.el-col {
@@ -180,6 +206,55 @@ label {
 	width: 100%;
 }
 
-#search-panel-event label, #search-panel-search label {
-	margin-left: 2px;
+/* Listing Details */
+#listing {
+	height: 100%;
+}
+
+.header {
+	width: 100%;
+	height: 80px;
+	background: linear-gradient(to right, #0064a4 0%, #3d99be 40%, #ffd200 100%);
+}
+
+#listing #logo {
+	position: relative;
+}
+
+#listing .photos {
+	height: 350px;
+}
+
+#listing .cover-image {
+	height: 100%;
+	width: 100%;
+	background-size: cover;
+	background-position: center center;
+}
+
+.listing-details {
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 2.5%;
+}
+
+.listing-title {
+	font-size: 2.5em;
+	font-weight: 700;
+}
+
+.listing-description {
+	padding-top: 1%;
+}
+
+.container {
+	/*position: relative;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;*/
+	background-color: rgba(236, 240, 241,0.8);
+	border-radius: 5px;
+	padding: 2.5%;
+	top: 17%;
 }
