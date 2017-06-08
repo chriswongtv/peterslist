@@ -3,10 +3,26 @@ from flask import render_template
 from flask import request
 from flask import make_response
 import requests
-import json
 app = Flask(__name__)
 
-DB = 1 # 1 = AsterixDB, 0 = Couchbase
+
+# Configurable
+# Connection string to use
+COUCHBASE_CONNSTR = 'couchbase://localhost/postings'
+# Password for bucket, if applicable
+COUCHBASE_PASSWORD = None
+
+from flask import Flask, g, abort, request, json, make_response, Response
+from couchbase.bucket import Bucket
+from couchbase.n1ql import N1QLQuery
+import couchbase.exceptions as cb_errors
+import couchbase.fulltext as FT
+
+app = Flask(__name__)
+app.config.from_object(__name__)
+
+
+DB = 0 # 1 = AsterixDB, 0 = Couchbase
 
 @app.route('/')
 def show_index():
@@ -14,12 +30,18 @@ def show_index():
 
 @app.route('/api/search')
 def search():
-	if (DB):
-		return asterixSearch(request.args)
+        return databaseSearch(request.args)
 
-@app.route('/housing/<post_id>')
-def show_housing(post_id):
-	return render_template('housing.html', info=json.loads(getListingInfo(post_id)))
+@app.route('/search2/<post_ID>')
+def search2(post_ID):
+#    response = requests.request("GET","http://localhost:8093/query?statement=SELECT%20text%20from%20postings%20limit%201")
+    response = requests.request("GET",'http://localhost:8093/query?statement=SELECT VALUE p FROM postings p WHERE p.postInfo.userID = "'+post_ID+'";')
+    return response.text
+
+@app.route('/<post_type>/<int:post_id>')
+def show_listing(post_type, post_id):
+	# TODO: Pull listing details from db and render the listing detail page
+	return render_template('listing.html')
 
 @app.route('/signup')
 def show_sign_up():
@@ -46,6 +68,10 @@ def login():
 @app.route('/post')
 def show_post():
 	return render_template('post.html')
+
+@app.route('/housing/<post_id>')
+def show_housing(post_id):
+	return render_template('housing.html', info=json.loads(getListingInfo(post_id)))
 
 @app.route('/api/post', methods=['POST'])
 def post():
@@ -76,20 +102,12 @@ def get_user():
 	# Return user info as JSON
 	return
 
-def asterixSearch(args):
-	post_type = args.get('type')
+## Common Functions
 
-	if (post_type == 'u'):
-		payload = 'SELECT VALUE p FROM Postings p;'
-	else:
-		payload = 'SELECT VALUE p FROM Postings p WHERE p.postingCategory = "' + post_type + '"'
+def getListingInfo(id):
+	return queryCouchbase('SELECT p FROM postings p WHERE p.postID = "' + id + '";')
 
-	if (post_type == 'Housing'):
-		payload = getAsterixHousingSearchPayload(args, payload)
-
-	return queryAsterix(payload)
-
-def getAsterixHousingSearchPayload(args, payload):
+def getHousingSearchPayload(args, payload):
 	room_type = args.get('room_type')
 	start_price = args.get('start_price')
 	end_price = args.get('end_price')
@@ -118,10 +136,99 @@ def getAsterixHousingSearchPayload(args, payload):
 			payload += ' and p.roomates > ' + 3
 		else:
 			payload += ' and p.roomates = ' + roommates
+	payload += ';'
+	return payload
+
+def databaseSearch(args):
+        post_type = args.get('type')
+        if (post_type == 'u'):
+                payload = 'SELECT VALUE p FROM postings p;'
+        else:
+                payload = 'SELECT VALUE p FROM postings p WHERE p.postingCategory = "' + post_type + '"'
+        if (post_type == 'Housing'):
+                payload = getHousingSearchPayload(args, payload)
+        if DB:
+                return queryAsterix(payload)
+        else:
+                return queryCouchbase(payload)
+
+def getItemSaleSearchPayload(args, payload):
+
+	category = args.get('category')
+	keyword = args.get('keyword')
+	
+	# if (category is not None):
+	# 	payload += ' and p.jobCategory =' + category
+
+	#USE one character off in ASTERIX DB
+	# if (title is not None):
+	# 	payload += ' and p.postInfo.amount>=' + title
+	# if (location is not None):
+	# 	payload += ' and p.postInfo.amount<=' + location
+	
+
+	payload += ';'
+	return payload
+
+def getEventSearchPayload(args, payload):
+
+	category = args.get('category')
+	name = args.get('name')
+	date = args.get('date')
+	
+	# if (category is not None):
+	# 	payload += ' and p.jobCategory =' + category
+
+	#USE one character off in ASTERIX DB
+	# if (title is not None):
+	# 	payload += ' and p.postInfo.amount>=' + title
+	# if (location is not None):
+	# 	payload += ' and p.postInfo.amount<=' + location
+	
+	payload += ';'
+	return payload
+
+def getLostAndFoundSearchPayload(args, payload):	
+	keyword = args.get('keyword')
+	query = args.get('query') 	# 0 means lost and 1 means found
+	
+	if (query is not None):
+		payload += ' and p.lostOrFound = ' + query
+
+	if(keyword is not None):
+		payload += ' and p.itemName = "' + keyword + '"'	
 
 	payload += ';'
 
 	return payload
+
+def getJobSearchPayload(args, payload):
+
+	category = args.get('category')
+	title = args.get('title')
+	location = args.get('location')
+	
+
+	# if (category is not None):
+	# 	payload += ' and p.jobCategory =' + category
+
+	#USE one character off in ASTERIX DB
+	# if (title is not None):
+	# 	payload += ' and p.postInfo.amount>=' + title
+	# if (location is not None):
+	# 	payload += ' and p.postInfo.amount<=' + location
+	
+	payload += ';'
+
+	return payload
+
+
+### Query Functions
+
+def queryCouchbase(query):
+        url='http://localhost:8093/query?statement='+query
+        response = requests.request("GET",url)
+        return json.dumps(json.loads(response.text)['results'])
 
 def queryAsterix(query):
 	url = "http://localhost:19002/query/service"
@@ -136,9 +243,6 @@ def queryAsterix(query):
 	response = requests.request("POST", url, data=payload, headers=headers)
 
 	return json.dumps(json.loads(response.text)['results'])
-
-def getListingInfo(id):
-	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
 
 if __name__ == '__main__':
 	app.run()
