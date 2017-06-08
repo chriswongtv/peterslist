@@ -137,15 +137,8 @@ def getAsterixJobSearchPayload(args, payload):
 	title = args.get('title')
 	location = args.get('location')
 	
-
-	# if (category is not None):
-	# 	payload += ' and p.jobCategory =' + category
-
-	#USE one character off in ASTERIX DB
-	# if (title is not None):
-	# 	payload += ' and p.postInfo.amount>=' + title
-	# if (location is not None):
-	# 	payload += ' and p.postInfo.amount<=' + location
+	if (category is not None):
+		payload += ' and p.jobCategory = "' + category + '"'
 	
 
 	payload += ';'
@@ -157,16 +150,10 @@ def getAsterixEventSearchPayload(args, payload):
 	category = args.get('category')
 	name = args.get('name')
 	date = args.get('date')
+
+	if (category is not None):
+		payload += ' and p.eventCategory = "' + category + '"'
 	
-
-	# if (category is not None):
-	# 	payload += ' and p.jobCategory =' + category
-
-	#USE one character off in ASTERIX DB
-	# if (title is not None):
-	# 	payload += ' and p.postInfo.amount>=' + title
-	# if (location is not None):
-	# 	payload += ' and p.postInfo.amount<=' + location
 	
 
 	payload += ';'
@@ -177,15 +164,9 @@ def getAsterixItemSaleSearchPayload(args, payload):
 
 	category = args.get('category')
 	keyword = args.get('keyword')
-	
-	# if (category is not None):
-	# 	payload += ' and p.jobCategory =' + category
 
-	#USE one character off in ASTERIX DB
-	# if (title is not None):
-	# 	payload += ' and p.postInfo.amount>=' + title
-	# if (location is not None):
-	# 	payload += ' and p.postInfo.amount<=' + location
+	f (category is not None):
+		payload += ' and p.itemCategory = "' + category + '"'
 	
 
 	payload += ';'
@@ -196,15 +177,13 @@ def getAsterixLostAndFoundSearchPayload(args, payload):
 
 	
 	keyword = args.get('keyword')
-	query = args.get('query') 	# 0 means lost and 1 means found
+	query = args.get('query') 
 	
 	if (query is not None):
-		payload += ' and p.lostOrFound = ' + query
+		payload += ' and p.lostOrFound = "' + query + '"'
 
 	if(keyword is not None):
 		payload += ' and p.itemName = "' + keyword + '"'
-
-	
 
 	payload += ';'
 
