@@ -244,6 +244,13 @@ label {
 	font-weight: 700;
 }
 
+.listing-location {
+	font-size: 1.2em;
+	padding-top: 2.5px;
+	padding-bottom: 10px;
+	font-weight: 300;
+}
+
 .listing-description {
 	padding-top: 1%;
 }
