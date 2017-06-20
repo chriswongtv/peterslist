@@ -8,7 +8,7 @@
 		</div>
 
 		<div class="photos">
-			<div class="cover-image" style="background-image:url(https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=);"></div>
+			<div class="cover-image" style="background-image:url({{ info[0]['p']['postInfo']['photos'] }});"></div>
 		</div>
 
 		<div class="listing-details">
@@ -16,6 +16,9 @@
 				<el-col :md="16">
 					<div class="listing-title">
 						{{ info[0]['p']['localityName'] }}
+					</div>
+					<div class="listing-location">
+						{{ info[0]['p']['postInfo']['location']['city'] }}, {{ info[0]['p']['postInfo']['location']['state'] }}
 					</div>
 					<div class="listing-description">
 						{{ info[0]['p']['postInfo']['description'] }}

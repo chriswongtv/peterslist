@@ -246,7 +246,7 @@
 				<el-col :md="8" v-for="item in housingSearchResults" :key="item.postID">
 					<el-card :body-style="{ padding: '0px' }">
 						<a :href="'/housing/' + item.postID">
-							<img src="https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=" class="image">
+							<img :src="item.postInfo.photos" class="image">
 						</a>
 						<div class="card-details">
 							<a :href="'/housing/' + item.postID">[[ item.localityName ]]</a>
