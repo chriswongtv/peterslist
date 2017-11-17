@@ -1,0 +1,19 @@
+{% block navbar %}
+<div id="header" class="center-left">
+	<a href="/" id="logo">
+		<span>Peters</span>list
+	</a>
+	<el-dropdown>
+		<el-button class="navbar-button">
+			<img src="{{ url_for('static', filename='img/housing.svg') }}">
+		</el-button>
+		<el-dropdown-menu slot="dropdown">
+			<el-dropdown-item>Action 1</el-dropdown-item>
+			<el-dropdown-item>Action 2</el-dropdown-item>
+			<el-dropdown-item>Action 3</el-dropdown-item>
+			<el-dropdown-item>Action 4</el-dropdown-item>
+			<el-dropdown-item>Action 5</el-dropdown-item>
+		</el-dropdown-menu>
+	</el-dropdown>
+</div>
+{% endblock %}
