@@ -2,20 +2,30 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import make_response
+from flask_cors import CORS
 import requests
 import json
-app = Flask(__name__)
+
+app = Flask(__name__,
+			static_folder = "../dist/static",
+			template_folder = "../dist")
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 DB = 1 # 1 = AsterixDB, 0 = Couchbase
 
-@app.route('/')
-def show_index():
-	return render_template('index.html')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+	return render_template("index.html")
 
 @app.route('/api/search')
 def search():
 	if (DB):
 		return asterixSearch(request.args)
+
+@app.route('/api/getListing')
+def getListing():
+	return getListingInfo(request.args.get('id'))
 		
 @app.route('/signup')
 def show_sign_up():
@@ -86,6 +96,7 @@ def asterixSearch(args):
 	return queryAsterix(payload)
 
 def getAsterixHousingSearchPayload(args, payload):
+	query = args.get('query')
 	room_type = args.get('room_type')
 	start_price = args.get('start_price')
 	end_price = args.get('end_price')
@@ -95,6 +106,8 @@ def getAsterixHousingSearchPayload(args, payload):
 	pets = args.get('pets')
 	roommates = args.get('roommates')
 
+	# if (query is not None):
+	# 	payload += ' and p.localityName LIKE "%' + query + '%"'
 	if (room_type is not None):
 		payload += ' and p.housingCategory =' + room_type
 	if (start_price is not None):
@@ -128,6 +141,8 @@ def queryAsterix(query):
 	}
 
 	payload = 'statement=USE PeterList; ' + query
+
+	print(payload)
 
 	response = requests.request("POST", url, data=payload, headers=headers)
 

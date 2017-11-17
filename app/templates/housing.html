@@ -1,12 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
+	{% include "navbar.html" %}
 	<div id="listing">
-		<div class="header center-left">
-			<a href="/" id="logo">
-				<span>Peters</span>list
-			</a>
-		</div>
-
 		<div class="photos">
 			<div class="cover-image" style="background-image:url({{ info[0]['p']['postInfo']['photos'] }});"></div>
 		</div>
@@ -35,4 +30,5 @@
 {% endblock %}
 {% block scripts %}
 	<script src="{{ url_for('static', filename='js/housing.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
 {% endblock %}

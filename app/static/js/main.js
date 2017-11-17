@@ -20,6 +20,7 @@ var main = new Vue({
 		searchPanelType: '', // Changes when a new "type" is selected
 		timeout: null, // For cancelTimeout() purposes
 		urlQueries: {}, // For URL queries storage
+		searchQuery: '',
 		housingSearchOptions: {
 			housingDateStart: new Date(), // Sets the move-in date to today by default
 			housingOptions: ['Parking', 'Private bathroom', 'Pets allowed'], // The options to be displayed in the checkbox
@@ -124,7 +125,6 @@ var main = new Vue({
 		},
 		globalSearchInput: ''
 	},
-	delimiters: ['[[',']]'],
 	mounted: function() {
 		this.searchPanelType = router.currentRoute.path.substring(1)
 

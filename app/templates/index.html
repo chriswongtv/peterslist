@@ -1,11 +1,25 @@
 {% extends "layout.html" %}
 {% block body %}
+{% raw %}
 	<div id="main">
 		<a id="logo">
 			<span>Peters</span>list
+			<el-dropdown>
+				<el-button class="navbar-button">
+					<img src="./static/img/housing.svg">
+					<i class="el-icon-arrow-down el-icon--right"></i>
+				</el-button>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item>Housing</el-dropdown-item>
+					<el-dropdown-item>Job</el-dropdown-item>
+					<el-dropdown-item>Event</el-dropdown-item>
+					<el-dropdown-item>Item Sale</el-dropdown-item>
+					<el-dropdown-item>Lost + Found</el-dropdown-item>
+				</el-dropdown-menu>
+			</el-dropdown>
 		</a>
-		<div id="search-panel" {% raw %}:class="{ clicked: searchPanelType !== '' }"{% endraw %}>
-			<div id="search-panel-icons">
+		<div id="search-panel" :class="{ clicked: searchPanelType !== '' }">
+			<div id="search-panel-icons" v-if="searchPanelType === ''">
 				<el-row :gutter="10">
 					<el-col :xs="12" :sm="8" :md="4" :lg="4">
 						<router-link to="/housing">
@@ -13,7 +27,7 @@
 									v-on:click="showSearchPanel('housing')"
 									:class="{ active: searchPanelType === 'housing' }">
 								<!-- House by hans draiman from the Noun Project -->
-								<img src="{{ url_for('static', filename='img/housing.svg') }}">
+								<img src="./static/img/housing.svg">
 							</div>
 						</router-link>
 						<span class="search-panel-label">HOUSING</span>
@@ -24,7 +38,7 @@
 									v-on:click="showSearchPanel('job')"
 									:class="{ active: searchPanelType === 'job' }">
 								<!-- Briefcase by mikicon from the Noun Project -->
-								<img src="{{ url_for('static', filename='img/job.svg') }}">
+								<img src="./static/img/job.svg">
 							</div>
 						</router-link>
 						<span class="search-panel-label">JOB</span>
@@ -35,7 +49,7 @@
 									v-on:click="showSearchPanel('event')"
 									:class="{ active: searchPanelType === 'event' }">
 								<!-- Ticket by Awesome from the Noun Project -->
-								<img src="{{ url_for('static', filename='img/event.svg') }}">
+								<img src="./static/img/event.svg">
 							</div>
 						</router-link>
 						<span class="search-panel-label">EVENT</span>
@@ -46,7 +60,7 @@
 									v-on:click="showSearchPanel('sale')"
 									:class="{ active: searchPanelType === 'sale' }">
 								<!-- sales tag by Mihail Zhukov from the Noun Project -->
-								<img src="{{ url_for('static', filename='img/sale.svg') }}">
+								<img src="./static/img/sale.svg">
 							</div>
 						</router-link>
 						<span class="search-panel-label">ITEM SALE</span>
@@ -57,7 +71,7 @@
 									v-on:click="showSearchPanel('lostandfound')"
 									:class="{ active: searchPanelType === 'lostandfound' }">
 								<!-- Heart by Lorena Salagre from the Noun Project -->
-								<img src="{{ url_for('static', filename='img/romance.svg') }}">
+								<img src="./static/img/romance.svg">
 							</div>
 						</router-link>
 						<span class="search-panel-label">LOST+FOUND</span>
@@ -68,7 +82,7 @@
 									v-on:click="showSearchPanel('search')"
 									:class="{ active: searchPanelType === 'search' }">
 								<!-- Search by Deepz from the Noun Project -->
-								<img src="{{ url_for('static', filename='img/search.svg') }}">
+								<img src="./static/img/search.svg">
 							</div>
 						</router-link>
 						<span class="search-panel-label">SEARCH</span>
@@ -76,7 +90,7 @@
 				</el-row>
 			</div>
 			<transition name="search-panel-options">
-				<div id="search-panel-options" v-if="searchPanelType !== ''">
+				<!-- <div id="search-panel-options" v-if="searchPanelType !== ''">
 					<div id="search-panel-house" v-if="searchPanelType === 'housing'">
 						<el-row :gutter="10">
 							<el-col :md="6">
@@ -115,7 +129,7 @@
 							<el-col :md="24">
 								<label>Additional Filters</label>
 								<el-checkbox-group v-model="housingSearchOptions.housingCheckbox">
-									<el-checkbox-button v-for="option in housingSearchOptions.housingOptions" :label="option" :key="option">[[option]]</el-checkbox-button>
+									<el-checkbox-button v-for="option in housingSearchOptions.housingOptions" :label="option" :key="option">{{option}}</el-checkbox-button>
 								</el-checkbox-group>
 							</el-col>
 						</el-row>
@@ -238,64 +252,110 @@
 							@keyup.enter="searchAll">
 						</el-input>
 					</div>
-				</div>
+				</div> -->
+
+				<el-input placeholder="Search" v-model="searchQuery" v-if="searchPanelType !== ''" class="input-with-select">
+					<el-button slot="append" icon="el-icon-search"></el-button>
+				</el-input>
 			</transition>
 		</div>
-		<div id="housing-results" class="result-container" v-if="searchPanelType === 'housing'">
-			<el-row :gutter="30">
-				<el-col :md="8" v-for="item in housingSearchResults" :key="item.postID">
-					<el-card :body-style="{ padding: '0px' }">
-						<a :href="'/housing/' + item.postID">
-							<img :src="item.postInfo.photos" class="image">
-						</a>
-						<div class="card-details">
-							<a :href="'/housing/' + item.postID">[[ item.localityName ]]</a>
-							<div class="bottom">
-							Available [[ formatDate(item.startDate) ]] for $[[ item.postInfo.amount ]]/month
-							</div>
-						</div>
-					</el-card>
-				</el-col>
-				<!-- <el-col :md="8">
-					<el-card :body-style="{ padding: '0px' }">
-						<img src="https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=" class="image">
-						<div style="padding: 14px;">
-							<span>UTC Berkeley</span>
-							<div class="bottom">
-							Available June 16 for $650/month
-							</div>
-						</div>
-					</el-card>
-				</el-col>
-				<el-col :md="8">
-					<el-card :body-style="{ padding: '0px' }">
-						<img src="https://images.unsplash.com/photo-1488805990569-3c9e1d76d51c?dpr=2&auto=format&fit=crop&w=1500&h=1001&q=80&cs=tinysrgb&crop=&bg=" class="image">
-						<div style="padding: 14px;">
-							<span>VDC Norte Sublease</span>
-							<div class="bottom">
-							Available June 29 for $950/month
-							</div>
-						</div>
-					</el-card>
-				</el-col>
-				<el-col :md="8">
-					<el-card :body-style="{ padding: '0px' }">
-						<img src="https://images.unsplash.com/photo-1463620910506-d0458143143e?dpr=2&auto=format&fit=crop&w=1500&h=1000&q=80&cs=tinysrgb&crop=&bg=" class="image">
-						<div style="padding: 14px;">
-							<span>Oxford Court</span>
-							<div class="bottom">
-							Available July 1 for $720/month
-							</div>
-						</div>
-					</el-card>
-				</el-col> -->
-			</el-row>
-		</div>
-		<div id="event-results" class="result-container" v-if="searchPanelType === 'event'">
+		<div id="results" v-if="searchPanelType !== ''">
+			<el-row :gutter="10">
+				<el-col :md="5">
+					<div class="result-filter-container">
+						<label>Room Type</label>
+						<el-select v-model="housingSearchOptions.housingSearchRoommate" placeholder="All Rooms">
+							<el-option label="All Rooms" value="0">
+							</el-option>
+							<el-option label="Single Room" value="1">
+							</el-option>
+							<el-option label="Double Room" value="2">
+							</el-option>
+							<el-option label="Triple Room" value="3">
+							</el-option>
+							<el-option label="4+ Room" value="4">
+							</el-option>
+						</el-select>
 
+						<label>Price Range</label>
+						<el-slider
+							v-model="housingSearchOptions.housingPriceRange"
+							range
+							:min="200"
+							:max="1500"
+							:format-tooltip="formatPriceRange">
+						</el-slider>	
+
+						<label>Move-In Date</label>
+						<el-date-picker
+							v-model="housingSearchOptions.housingDateStart"
+							type="date"
+							placeholder="Move-in Date">
+						</el-date-picker>
+
+						<label>Additional Filters</label>
+						<el-checkbox-group v-model="housingSearchOptions.housingCheckbox">
+							<el-checkbox-button v-for="option in housingSearchOptions.housingOptions" :label="option" :key="option">{{option}}</el-checkbox-button>
+						</el-checkbox-group>
+					</div>
+				</el-col>
+				<el-col :md="19">
+					<div id="housing-results" class="result-container" v-if="searchPanelType === 'housing'">
+						<el-row :gutter="30">
+							<el-col :md="8" v-for="item in housingSearchResults" :key="item.postID">
+								<el-card :body-style="{ padding: '0px' }">
+									<a :href="'/housing/' + item.postID">
+										<img :src="item.postInfo.photos" class="image">
+									</a>
+									<div class="card-details">
+										<a :href="'/housing/' + item.postID">{{ item.localityName }}</a>
+										<div class="bottom">
+										Available {{ formatDate(item.startDate) }} for ${{ item.postInfo.amount }}/month
+										</div>
+									</div>
+								</el-card>
+							</el-col>
+							<!-- <el-col :md="8">
+								<el-card :body-style="{ padding: '0px' }">
+									<img src="https://images.unsplash.com/photo-1486304873000-235643847519?dpr=2&auto=format&fit=crop&w=1500&h=844&q=80&cs=tinysrgb&crop=&bg=" class="image">
+									<div style="padding: 14px;">
+										<span>UTC Berkeley</span>
+										<div class="bottom">
+										Available June 16 for $650/month
+										</div>
+									</div>
+								</el-card>
+							</el-col>
+							<el-col :md="8">
+								<el-card :body-style="{ padding: '0px' }">
+									<img src="https://images.unsplash.com/photo-1488805990569-3c9e1d76d51c?dpr=2&auto=format&fit=crop&w=1500&h=1001&q=80&cs=tinysrgb&crop=&bg=" class="image">
+									<div style="padding: 14px;">
+										<span>VDC Norte Sublease</span>
+										<div class="bottom">
+										Available June 29 for $950/month
+										</div>
+									</div>
+								</el-card>
+							</el-col>
+							<el-col :md="8">
+								<el-card :body-style="{ padding: '0px' }">
+									<img src="https://images.unsplash.com/photo-1463620910506-d0458143143e?dpr=2&auto=format&fit=crop&w=1500&h=1000&q=80&cs=tinysrgb&crop=&bg=" class="image">
+									<div style="padding: 14px;">
+										<span>Oxford Court</span>
+										<div class="bottom">
+										Available July 1 for $720/month
+										</div>
+									</div>
+								</el-card>
+							</el-col> -->
+						</el-row>
+					</div>
+				</el-col>
+			</el-row>
+			<div id="event-results" class="result-container" v-if="searchPanelType === 'event'">
+
+			</div>
 		</div>
 	</div>
-{% endblock %}
-{% block scripts %}
-	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endraw %}
 {% endblock %}
