@@ -76,6 +76,7 @@ export default {
   name: 'HousingSearch',
   data () {
     return {
+      timeout: null,
       housingSearchOptions: {
         housingSearchQuery: '',
         housingDateStart: new Date(), // Sets the move-in date to today by default
@@ -92,13 +93,15 @@ export default {
   },
   watch: {
     'housingSearchOptions.housingSearchQuery': function() {
+      clearTimeout(this.timeout);
+
       var query = this.$parent.getQueryString();
-
       query.q = encodeURI(this.housingSearchOptions.housingSearchQuery);
-
       this.$router.replace({ query: query })
 
-      this.searchHousing();
+      this.timeout = setTimeout(() => {
+        this.searchHousing();
+      }, 500)
     },
     'housingSearchOptions.housingDateStart': function() {
       var query = this.$parent.getQueryString();

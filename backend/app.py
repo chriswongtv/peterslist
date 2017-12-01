@@ -106,8 +106,8 @@ def getAsterixHousingSearchPayload(args, payload):
 	pets = args.get('pets')
 	roommates = args.get('roommates')
 
-	# if (query is not None):
-	# 	payload += ' and p.localityName LIKE "%' + query + '%"'
+	if (query is not None):
+		payload += ' and lower(p.localityName) LIKE lower("%25' + query + '%25")'
 	if (room_type is not None):
 		payload += ' and p.housingCategory =' + room_type
 	if (start_price is not None):
