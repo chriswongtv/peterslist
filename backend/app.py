@@ -155,11 +155,29 @@ def getListingInfo(id):
 
 @app.route('/app/subscribe', methods=['POST'])
 def handleSubscription():
-	return True
+	postType = request.args.get('type')
+	if postType == "Jobs":
+		subscribeToJobsChannel(request.args)
+	else if postType == "Housing":
+		#TODO
+		#subscribeToHousingChannel(request.args)
+
+def subscribeToJobsChannel(args):
+	jobType = args.get("jobType")
+	jobIndustry = args.get("jobIndustry")
+	timeInterval = args.get("timeInterval")
+	userId = args.get("userId")
+
+	queryString = 'subscribe to searchJob("{}","{}","{}") on peterListBroker;'.format(jobType,jobIndustry,timeInterval)
+	queryAsterix(queryAsterix)
+
+	# TODO: Parse response to get subscription uuid
+	subId = ""
+	insertString = 'insert into UserSubscription({"subID": "{}", "userID": "{}"});'.format(subId, userId)
+	queryAsterix(insertString)
 
 @app.route('/brokerNotifications', methods=['POST'])
 def handleBrokerNotification():
-	print("In handle_broker_notification()")
 	notificationJsonString = list(request.form.to_dict().keys())[0]
 	notificationDict = json.loads(notificationJsonString)
 	channelResultSet = notificationDict["channelName"]) + "Results"
@@ -168,11 +186,11 @@ def handleBrokerNotification():
 	# Get results using the subscription id
 	subIdResults = getResultUsingSubId(channelResultSet, subId)
 
-	# sendEmail(subIdResults, emailAddress)
+	#TODO sendEmail(subIdResults, emailAddress)
 
 	# Delete all the results
 	deleteResultUsingSubId(subId)
-	#return subIdResults
+	return subIdResults
 
 def getResultUsingSubId(channelResultSet, subId):
 	queryString = 'getResultByChannelAndSubId("{}","{}");'.format(channelResultSet, subId)
@@ -185,6 +203,8 @@ def deleteResultUsingSubId(subId):
 	deleteString = 'DELETE from channelResultDataset r WHERE r.subscriptionId = uuid({})'.format(subId)
 	queryAsterix(deleteString)
 
+def sendEmail(result, emailAddress):
+	return True
 
 if __name__ == '__main__':
 	app.run()
