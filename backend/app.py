@@ -26,7 +26,7 @@ def search():
 @app.route('/api/getListing')
 def getListing():
 	return getListingInfo(request.args.get('id'))
-		
+
 @app.route('/signup')
 def show_sign_up():
 	return render_template('signup.html')
@@ -150,6 +150,41 @@ def queryAsterix(query):
 
 def getListingInfo(id):
 	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
+
+################ For Subscriptions using Big Active Data #####################
+
+@app.route('/app/subscribe', methods=['POST'])
+def handleSubscription():
+	return True
+
+@app.route('/brokerNotifications', methods=['POST'])
+def handleBrokerNotification():
+	print("In handle_broker_notification()")
+	notificationJsonString = list(request.form.to_dict().keys())[0]
+	notificationDict = json.loads(notificationJsonString)
+	channelResultSet = notificationDict["channelName"]) + "Results"
+	subId = notificationDict["subscriptionIds"][0]
+
+	# Get results using the subscription id
+	subIdResults = getResultUsingSubId(channelResultSet, subId)
+
+	# sendEmail(subIdResults, emailAddress)
+
+	# Delete all the results
+	deleteResultUsingSubId(subId)
+	#return subIdResults
+
+def getResultUsingSubId(channelResultSet, subId):
+	queryString = 'getResultByChannelAndSubId("{}","{}");'.format(channelResultSet, subId)
+	queryAsterix(queryString)
+
+'''
+Delete all the results with the given sub id from the channelResultDataset
+'''
+def deleteResultUsingSubId(subId):
+	deleteString = 'DELETE from channelResultDataset r WHERE r.subscriptionId = uuid({})'.format(subId)
+	queryAsterix(deleteString)
+
 
 if __name__ == '__main__':
 	app.run()
