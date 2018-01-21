@@ -6,6 +6,9 @@ from flask_cors import CORS
 import requests
 import json
 
+import SubscriptionUtils
+from AsterixUtils import *
+
 app = Flask(__name__,
 			static_folder = "../dist/static",
 			template_folder = "../dist")
@@ -132,79 +135,42 @@ def getAsterixHousingSearchPayload(args, payload):
 
 	return payload
 
-def queryAsterix(query):
-	url = "http://localhost:19002/query/service"
-
-	headers = {
-		'content-type': "application/x-www-form-urlencoded",
-		'cache-control': "no-cache"
-	}
-
-	payload = 'statement=USE PeterList; ' + query
-
-	print(payload)
-
-	response = requests.request("POST", url, data=payload, headers=headers)
-
-	return json.dumps(json.loads(response.text)['results'])
-
 def getListingInfo(id):
 	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
 
 ################ For Subscriptions using Big Active Data #####################
 
-@app.route('/app/subscribe', methods=['POST'])
+@app.route('/api/subscribe', methods=['POST'])
 def handleSubscription():
 	postType = request.args.get('type')
 	if postType == "Jobs":
-		subscribeToJobsChannel(request.args)
-	else if postType == "Housing":
-		#TODO
-		#subscribeToHousingChannel(request.args)
+		return SubscriptionUtils.subscribeToJobsChannel(request.args)
+	elif postType == "Housing":
+		#TODO subscribeToHousingChannel(request.args)
+		return
 
-def subscribeToJobsChannel(args):
-	jobType = args.get("jobType")
-	jobIndustry = args.get("jobIndustry")
-	timeInterval = args.get("timeInterval")
-	userId = args.get("userId")
-
-	queryString = 'subscribe to searchJob("{}","{}","{}") on peterListBroker;'.format(jobType,jobIndustry,timeInterval)
-	queryAsterix(queryAsterix)
-
-	# TODO: Parse response to get subscription uuid
-	subId = ""
-	insertString = 'insert into UserSubscription({"subID": "{}", "userID": "{}"});'.format(subId, userId)
-	queryAsterix(insertString)
+@app.route('/api/unsubscribe', methods=['POST'])
+def handleUnsubscription():
+	return
 
 @app.route('/brokerNotifications', methods=['POST'])
 def handleBrokerNotification():
 	notificationJsonString = list(request.form.to_dict().keys())[0]
 	notificationDict = json.loads(notificationJsonString)
-	channelResultSet = notificationDict["channelName"]) + "Results"
+
+	channelResultSet = notificationDict["channelName"] + "Results"
 	subId = notificationDict["subscriptionIds"][0]
 
 	# Get results using the subscription id
-	subIdResults = getResultUsingSubId(channelResultSet, subId)
+	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))
+	#for i in subIdResults:
+	#	print(i["p"]["jobIndustry"])
 
 	#TODO sendEmail(subIdResults, emailAddress)
 
 	# Delete all the results
-	deleteResultUsingSubId(subId)
+	SubscriptionUtils.deleteResultUsingSubId(channelResultSet, subId)
 	return subIdResults
-
-def getResultUsingSubId(channelResultSet, subId):
-	queryString = 'getResultByChannelAndSubId("{}","{}");'.format(channelResultSet, subId)
-	queryAsterix(queryString)
-
-'''
-Delete all the results with the given sub id from the channelResultDataset
-'''
-def deleteResultUsingSubId(subId):
-	deleteString = 'DELETE from channelResultDataset r WHERE r.subscriptionId = uuid({})'.format(subId)
-	queryAsterix(deleteString)
-
-def sendEmail(result, emailAddress):
-	return True
 
 if __name__ == '__main__':
 	app.run()
