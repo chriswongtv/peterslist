@@ -6,6 +6,9 @@ from flask_cors import CORS
 import requests
 import json
 
+import SubscriptionUtils
+from AsterixUtils import *
+
 app = Flask(__name__,
 			static_folder = "../dist/static",
 			template_folder = "../dist")
@@ -26,7 +29,7 @@ def search():
 @app.route('/api/getListing')
 def getListing():
 	return getListingInfo(request.args.get('id'))
-		
+
 @app.route('/signup')
 def show_sign_up():
 	return render_template('signup.html')
@@ -132,24 +135,44 @@ def getAsterixHousingSearchPayload(args, payload):
 
 	return payload
 
-def queryAsterix(query):
-	url = "http://localhost:19002/query/service"
-
-	headers = {
-		'content-type': "application/x-www-form-urlencoded",
-		'cache-control': "no-cache"
-	}
-
-	payload = 'statement=USE PeterList; ' + query
-
-	print(payload)
-
-	response = requests.request("POST", url, data=payload, headers=headers)
-
-	return json.dumps(json.loads(response.text)['results'])
-
 def getListingInfo(id):
 	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
+
+################ For Subscriptions using Big Active Data #####################
+
+@app.route('/api/subscribe', methods=['POST'])
+def handleSubscription():
+	postType = request.args.get('type')
+	if postType == "Jobs":
+		return SubscriptionUtils.subscribeToJobsChannel(request.args)
+	elif postType == "HousingSale":
+		return subscribeToHousingSaleChannel(request.args)
+	elif postType == "HousingLease":
+		#TODO subscribeToHousingLeaseChannel(request.args)
+		return
+
+@app.route('/api/unsubscribe', methods=['POST'])
+def handleUnsubscription():
+	return
+
+@app.route('/brokerNotifications', methods=['POST'])
+def handleBrokerNotification():
+	notificationJsonString = list(request.form.to_dict().keys())[0]
+	notificationDict = json.loads(notificationJsonString)
+
+	channelResultSet = notificationDict["channelName"] + "Results"
+	subId = notificationDict["subscriptionIds"][0]
+
+	# Get results using the subscription id
+	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))
+	#for i in subIdResults:
+	#	print(i["p"]["jobIndustry"])
+
+	#TODO sendEmail(subIdResults, emailAddress)
+
+	# Delete all the results
+	SubscriptionUtils.deleteResultUsingSubId(channelResultSet, subId)
+	return subIdResults
 
 if __name__ == '__main__':
 	app.run()
