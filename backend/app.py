@@ -145,8 +145,10 @@ def handleSubscription():
 	postType = request.args.get('type')
 	if postType == "Jobs":
 		return SubscriptionUtils.subscribeToJobsChannel(request.args)
-	elif postType == "Housing":
-		#TODO subscribeToHousingChannel(request.args)
+	elif postType == "HousingSale":
+		return subscribeToHousingSaleChannel(request.args)
+	elif postType == "HousingLease":
+		#TODO subscribeToHousingLeaseChannel(request.args)
 		return
 
 @app.route('/api/unsubscribe', methods=['POST'])
