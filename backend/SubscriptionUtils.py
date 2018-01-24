@@ -5,48 +5,38 @@ from flask import request
 from AsterixUtils import *
 
 # Asterix Query
-SUBSCRIBE_JOBS_CHANNEL = 'subscribe to jobChannel({},{},{}) on peterListBroker;'
-SUBSCRIBE_HOUSING_SALE_CHANNEL = 'subscribe to housingSaleChannel({},{},{},{},{},{},{},{},{},{}) on peterListBroker;'
+SUBSCRIBE_JOBS_CHANNEL = 'subscribe to jobChannel{} on peterListBroker;'
+SUBSCRIBE_EVENT_CHANNEL = 'subscribe to eventChannel{} on peterListBroker;'
+SUBSCRIBE_ITEM_CHANNEL = 'subscribe to itemSaleChannel{} on peterListBroker;'
+SUBSCRIBE_HOUSING_SALE_CHANNEL = 'subscribe to housingSaleChannel{} on peterListBroker;'
+SUBSCRIBE_HOUSING_LEASE_CHANNEL = 'subscribe to housingLeaseChannel{} on peterListBroker;'
 
-
-INSERT_USER_SUBSCRIPTION = 'insert into UserSubscription({"subID": "{}", "userID": "{}"});'
+INSERT_USER_SUBSCRIPTION = 'insert into UserSubscription({{"subID": "{}", "userID": "{}"}});'
 GET_CHANNEL_RESULT_BY_SUBID = 'SELECT r.result.p FROM {} r WHERE r.subscriptionId = uuid("{}");'
 DELETE_CHANNEL_RESULT = 'DELETE from {} r WHERE r.subscriptionId = uuid("{}");'
 
 # API Response Messages
 SUBSCRIBE_API_RESPONSE = "Subscribed userId {} with subscription id {}."
 
-def subscribeToJobsChannel(args):
-	jobType = argNullCheck(args.get("jobType"))
-	jobIndustry = argNullCheck(args.get("jobIndustry"))
-	timeInterval = argNullCheck(args.get("timeInterval"))
-	userId = argNullCheck(args.get("userId"))
-	if (userId == None):
-		return "Argument 'userId' must be provided."
-
-	subscribeString = SUBSCRIBE_JOBS_CHANNEL.format(jobType,jobIndustry,timeInterval)
+def subscribeJobsChannel(functionArgStr, userId):
+	subscribeString = SUBSCRIBE_JOBS_CHANNEL.format(functionArgStr)
 	return subscribeToChannelAndInsertUser(subscribeString, userId)
 
-def subscribeToHousingSaleChannel(args):
-	priceMin = argNullCheck(args.get("priceMin"))
-	priceMax = argNullCheck(args.get("priceMax"))
-	bedroomNumber = argNullCheck(args.get("bedroomNumber"))
-	bathroomNumber = argNullCheck(args.get("bathroomNumber"))
-	homeType = argNullCheck(args.get("homeType"))
-	size = argNullCheck(args.get("size"))
-	dateAvailable = argNullCheck(args.get("dateAvailable"))
-	furnished = argNullCheck(args.get("furnished"))
-	parkingNumber = argNullCheck(args.get("parkingNumber"))
-	timeInterval = argNullCheck(args.get("timeInterval"))
-	userId = argNullCheck(args.get("userId"))
+def subscribeEventsChannel(functionArgStr, userId):
+	subscribeString = SUBSCRIBE_EVENT_CHANNEL.format(functionArgStr)
+	return subscribeToChannelAndInsertUser(subscribeString, userId)
 
-	if (userId == None):
-		return "Argument 'userId' must be provided."
+def subscribeItemChannel(functionArgStr, userId):
+	subscribeString = SUBSCRIBE_ITEM_CHANNEL.format(functionArgStr)
+	return subscribeToChannelAndInsertUser(subscribeString, userId)
 
-	subscribeStr = SUBSCRIBE_HOUSING_SALE_CHANNEL.format(priceMin,priceMax,bedroomNumber,
-														bathroomNumber,homeType,size,dateAvailable,
-														furnished,parkingNumber,timeInterval)
-	return subscribeToChannelAndInsertUser(subscribeStr, userId)
+def subscribeHouseSaleChannel(functionArgStr, userId):
+	subscribeString = SUBSCRIBE_HOUSING_SALE_CHANNEL.format(functionArgStr)
+	return subscribeToChannelAndInsertUser(subscribeString, userId)
+
+def subscribeHouseLeaseChannel(functionArgStr, userId):
+	subscribeString = SUBSCRIBE_HOUSING_LEASE_CHANNEL.format(functionArgStr)
+	return subscribeToChannelAndInsertUser(subscribeString, userId)
 
 def subscribeToChannelAndInsertUser(subscribeStr, userId):
 	resp = queryAsterix(subscribeStr)
@@ -59,7 +49,7 @@ def subscribeToChannelAndInsertUser(subscribeStr, userId):
 
 def insertUserSubscription(userId, subId):
 	insertString = INSERT_USER_SUBSCRIPTION.format(subId, userId)
-	queryAsterix(insertString)
+	print(dmlAsterix(insertString))
 
 def getResultUsingSubId(channelResultSet, subId):
 	queryString = GET_CHANNEL_RESULT_BY_SUBID.format(channelResultSet, subId)
@@ -71,7 +61,7 @@ Delete all the results with the given sub id from the channelResultDataset
 '''
 def deleteResultUsingSubId(channelResultSet, subId):
 	deleteString = DELETE_CHANNEL_RESULT.format(channelResultSet, subId)
-	status = deleteAsterix(deleteString)
+	status = dmlAsterix(deleteString)
 	return status
 
 '''
