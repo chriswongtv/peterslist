@@ -364,7 +364,7 @@ export default {
   background-position: center center;
   height: 100%;
   width: 100%;
-  position: fixed;
+  position: relative;
   overflow: scroll;
 }
 

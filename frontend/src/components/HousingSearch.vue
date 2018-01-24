@@ -9,6 +9,9 @@
       <el-row :gutter="10">
         <el-col :md="5">
           <div class="result-filter-container">
+            <el-button type="default" class="full-width" @click="searchAlertDialogVisible = true" plain>
+              Create Search Alert
+            </el-button>
             <label>Room Type</label>
             <el-select v-model="housingSearchOptions.housingSearchRoommate" placeholder="All Rooms">
               <el-option label="All Rooms" value="0">
@@ -65,6 +68,17 @@
           </div>
         </el-col>
       </el-row>
+
+      <el-dialog
+        title="Create Search Alert"
+        :visible.sync="searchAlertDialogVisible"
+        width="30%">
+        <span>Get notified for new listings with this query.</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="searchAlertDialogVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="subscribe" :loading="searchAlertDialogSubscribeButtonLoading">Subscribe</el-button>
+        </span>
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -85,7 +99,9 @@ export default {
         housingSearchRoommate: '0', // The number of desired roommates
         housingPriceRange: [450, 1250] // Default price range
       },
-      housingSearchResults: '' // Stores all the search results
+      housingSearchResults: '', // Stores all the search results
+      searchAlertDialogVisible: false,
+      searchAlertDialogSubscribeButtonLoading: false
     }
   },
   mounted: function() {
@@ -235,6 +251,18 @@ export default {
       }).then(res => {
         vm.housingSearchResults = res.data; // Store the results
       });
+    },
+    subscribe: function() {
+      this.searchAlertDialogSubscribeButtonLoading = true;
+      setTimeout(() => {
+        this.$notify({
+          title: 'Success',
+          message: 'You will now be notified for new posts through email.',
+          type: 'success'
+        });
+        this.searchAlertDialogVisible = false;
+        this.searchAlertDialogSubscribeButtonLoading = false;
+      }, 1000);
     }
   }
 }

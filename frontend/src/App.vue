@@ -31,6 +31,10 @@ body {
   align-items: center;
 }
 
+.full-width {
+  width: 100%;
+}
+
 #app {
   height: 100%;
 }
