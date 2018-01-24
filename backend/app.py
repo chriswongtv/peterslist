@@ -7,6 +7,7 @@ import requests
 import json
 
 import SubscriptionUtils
+import ApiUtils
 from AsterixUtils import *
 
 app = Flask(__name__,
@@ -25,6 +26,14 @@ def catch_all(path):
 def search():
 	if (DB):
 		return asterixSearch(request.args)
+
+@app.route('/api/subscribe', methods=['POST'])
+def subscribe():
+	return handleSubscription(request.args)
+
+@app.route('/api/unsubscribe', methods=['POST'])
+def unsubscribe():
+	return
 
 @app.route('/api/getListing')
 def getListing():
@@ -86,74 +95,44 @@ def get_user():
 	return
 
 def asterixSearch(args):
-	post_type = args.get('type')
-
-	if (post_type == 'u'):
-		payload = 'SELECT VALUE p FROM Postings p;'
-	else:
-		payload = 'SELECT VALUE p FROM Postings p WHERE p.postingCategory = "' + post_type + '"'
-
-	if (post_type == 'Housing'):
-		payload = getAsterixHousingSearchPayload(args, payload)
-
-	return queryAsterix(payload)
-
-def getAsterixHousingSearchPayload(args, payload):
-	query = args.get('query')
-	room_type = args.get('room_type')
-	start_price = args.get('start_price')
-	end_price = args.get('end_price')
-	movein_date = args.get('movein_date')
-	parking = args.get('parking')
-	bathroom = args.get('bathroom')
-	pets = args.get('pets')
-	roommates = args.get('roommates')
-
-	if (query is not None):
-		payload += ' and lower(p.localityName) LIKE lower("%25' + query + '%25")'
-	if (room_type is not None):
-		payload += ' and p.housingCategory =' + room_type
-	if (start_price is not None):
-		payload += ' and p.postInfo.amount>=' + start_price
-	if (end_price is not None):
-		payload += ' and p.postInfo.amount<=' + end_price
-	# if (movein_date is not None):
-		# TODO: Add move in date filter
-	if (parking is not None):
-		payload += ' and p.hasParking = ' + parking
-	if (bathroom is not None):
-		payload += ' and p.bathroomType = ' + bathroom
-	if (pets is not None):
-		payload += ' and p.petAllowed = ' + pets
-	if (roommates is not None):
-		if (roommates == 3):
-			payload += ' and p.roomates > ' + 3
-		else:
-			payload += ' and p.roomates = ' + roommates
-
-	payload += ';'
-
-	return payload
+	postType = args.get('type')
+	if postType == "Jobs":
+		jobsFunctionArgs = ApiUtils.getJobFunctionArgStr(args)
+		return searchJobs(jobsFunctionArgs)
+	elif postType == "Events":
+		eventsFunctionArgs = ApiUtils.getEventFunctionArgStr(args)
+		return searchEvents(eventsFunctionArgs)
+	elif postType == "Items":
+		itemsFunctionArgs = ApiUtils.getItemFunctionArgStr(args)
+		return searchItems(itemsFunctionArgs)
+	elif postType == "HousingSale":
+		houseSaleFunctionArgs = ApiUtils.getHousingSaleFunctionArgStr(args)
+		return searchHousingSale(houseSaleFunctionArgs)
+	elif postType == "HousingLease":
+		houseLeaseFunctionArgs = ApiUtils.getHousingLeaseFunctionArgStr(args)
+		return searchHousingLease(houseLeaseFunctionArgs)
+	return None
 
 def getListingInfo(id):
 	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
 
 ################ For Subscriptions using Big Active Data #####################
 
-@app.route('/api/subscribe', methods=['POST'])
-def handleSubscription():
-	postType = request.args.get('type')
+def handleSubscription(args):
+	postType = args.get('type')
+	userId = args.get("userId")
+	if (userId == None):
+		return "Argument 'userId' must be provided."
 	if postType == "Jobs":
-		return SubscriptionUtils.subscribeToJobsChannel(request.args)
-	elif postType == "HousingSale":
-		return subscribeToHousingSaleChannel(request.args)
-	elif postType == "HousingLease":
-		#TODO subscribeToHousingLeaseChannel(request.args)
-		return
-
-@app.route('/api/unsubscribe', methods=['POST'])
-def handleUnsubscription():
-	return
+		functionArgs = ApiUtils.getJobFunctionArgStr(args)
+		return SubscriptionUtils.subscribeJobsChannel(functionArgs, userId)
+	elif postType == "Events":
+		functionArgs = ApiUtils.getEventFunctionArgStr(args)
+		return SubscriptionUtils.getEventFunctionArgStr(functionArgs, userId)
+	elif postType == "Items":
+		functionArgs = ApiUtils.getItemFunctionArgStr(args)
+		return SubscriptionUtils.getItemFunctionArgStr(functionArgs, userId)
+	return None
 
 @app.route('/brokerNotifications', methods=['POST'])
 def handleBrokerNotification():
@@ -162,7 +141,6 @@ def handleBrokerNotification():
 
 	channelResultSet = notificationDict["channelName"] + "Results"
 	subId = notificationDict["subscriptionIds"][0]
-
 	# Get results using the subscription id
 	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))
 	#for i in subIdResults:
