@@ -133,6 +133,7 @@ def asterixSearch(args):
 def handleSubscription(args):
 	postType = args.get('type')
 	userId = args.get("userId")
+	print(json.dumps(args))
 	if userId == None:
 		return "Argument 'userId' must be provided."
 	if postType == "Jobs":
