@@ -78,24 +78,24 @@ searchHousingSale(priceMin,priceMax,bedroomNumber,bathroomNumber,homeType,size,d
                     furnished,parkingNumber,timeInterval)
 '''
 def getHousingSaleFunctionArgStr(args):
-	priceMin = argNullCheck(args.get("priceMin"))
-	priceMax = argNullCheck(args.get("priceMax"))
-	bedroomNumber = argNullCheck(args.get("bedroomNumber"))
-	bathroomNumber = argNullCheck(args.get("bathroomNumber"))
-	homeType = argNullCheck(args.get("homeType"))
-	size = argNullCheck(args.get("size"))
-	dateAvailable = argNullCheck(args.get("dateAvailable"))
-	furnished = argNullCheck(args.get("furnished"))
-	parkingNumber = argNullCheck(args.get("parkingNumber"))
-	timeInterval = argNullCheck(args.get("timeInterval"))
+    priceMin = argNullCheck(args.get("priceMin"))
+    priceMax = argNullCheck(args.get("priceMax"))
+    bedroomNumber = argNullCheck(args.get("bedroomNumber"))
+    bathroomNumber = argNullCheck(args.get("bathroomNumber"))
+    homeType = argNullCheck(args.get("homeType"))
+    size = argNullCheck(args.get("size"))
+    dateAvailable = argNullCheck(args.get("dateAvailable"))
+    furnished = argNullCheck(args.get("furnished"))
+    parkingNumber = argNullCheck(args.get("parkingNumber"))
+    timeInterval = argNullCheck(args.get("timeInterval"))
 
-	functionArgStr = HOUSING_SALE_FUNCTION.format(priceMin = priceMin,priceMax = priceMax,bedroomNumber = bedroomNumber,
+    functionArgStr = HOUSING_SALE_FUNCTION.format(priceMin = priceMin,priceMax = priceMax,bedroomNumber = bedroomNumber,
                                                 bathroomNumber = bathroomNumber,homeType = homeType,size = size,
                                                 dateAvailable = dateAvailable,furnished = furnished,
                                                 parkingNumber = parkingNumber, timeInterval = timeInterval)
-	return functionArgStr
+    return functionArgStr
 
 def argNullCheck(argStr):
-	if argStr == None:
-		return "NULL"
-	return '"' + argStr + '"'
+    if argStr == None:
+    	return "NULL"
+    return '"' + argStr + '"'
