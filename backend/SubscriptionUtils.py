@@ -12,6 +12,7 @@ SUBSCRIBE_HOUSING_SALE_CHANNEL = 'subscribe to housingSaleChannel{} on peterList
 SUBSCRIBE_HOUSING_LEASE_CHANNEL = 'subscribe to housingLeaseChannel{} on peterListBroker;'
 
 INSERT_USER_SUBSCRIPTION = 'insert into UserSubscription({{"subID": "{}", "userID": "{}"}});'
+GET_USERID_FROM_SUBID = 'SELECT VALUE userID from UserSubscription where subID = "{}";'
 GET_CHANNEL_RESULT_BY_SUBID = 'SELECT VALUE r.result FROM {} r WHERE r.subscriptionId = uuid("{}");'
 DELETE_CHANNEL_RESULT = 'DELETE from {} r WHERE r.subscriptionId = uuid("{}");'
 
@@ -55,6 +56,15 @@ def getResultUsingSubId(channelResultSet, subId):
 	queryString = GET_CHANNEL_RESULT_BY_SUBID.format(channelResultSet, subId)
 	result = queryAsterix(queryString)
 	return result
+
+def getUserIdUsingSubId(subId):
+	queryString = GET_USERID_FROM_SUBID.format(subId)
+	resp = queryAsterix(queryString)
+	if resp == None:
+		return "No email notifications to send"
+	userId = json.loads(resp)['results'][0]
+	return userId
+
 
 '''
 Delete all the results with the given sub id from the channelResultDataset
