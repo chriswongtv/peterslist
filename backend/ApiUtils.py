@@ -36,8 +36,8 @@ searchItemSale(itemCategory,condition,priceMin,priceMax,timeInterval)
 def getItemFunctionArgStr(args):
     itemCategory = argNullCheck(args.get("itemCategory"))
     condition = argNullCheck(args.get("condition"))
-    priceMin = argNullCheck(args.get("priceMin"))
-    priceMax = argNullCheck(args.get("priceMax"))
+    priceMin = argFloatNullCheck(args.get("priceMin"))
+    priceMax = argFloatNullCheck(args.get("priceMax"))
     timeInterval = argNullCheck(args.get("timeInterval"))
 
     functionArgStr = ITEM_SALE_FUNCTION.format(itemCategory = itemCategory, condition = condition, priceMin = priceMin,
@@ -50,18 +50,18 @@ searchHousingLease(priceMin,priceMax,bedroomNumber,bathroomNumber,homeType,size,
                     furnished,hasParking,petAllowed,endDate,roommates,timeInterval)
 '''
 def getHousingLeaseFunctionArgStr(args):
-    priceMin = argNullCheck(args.get("priceMin"))
-    priceMax = argNullCheck(args.get("priceMax"))
-    bedroomNumber = argNullCheck(args.get("bedroomNumber"))
-    bathroomNumber = argNullCheck(args.get("bathroomNumber"))
+    priceMin = argFloatNullCheck(args.get("priceMin"))
+    priceMax = argFloatNullCheck(args.get("priceMax"))
+    bedroomNumber = argIntNullCheck(args.get("bedroomNumber"))
+    bathroomNumber = argIntNullCheck(args.get("bathroomNumber"))
     homeType = argNullCheck(args.get("homeType"))
-    size = argNullCheck(args.get("size"))
+    size = argFloatNullCheck(args.get("size"))
     dateAvailable = argNullCheck(args.get("dateAvailable"))
-    furnished = argNullCheck(args.get("furnished"))
-    hasParking = argNullCheck(args.get("hasParking"))
-    petAllowed = argNullCheck(args.get("petAllowed"))
+    furnished = argBoolNullCheck(args.get("furnished"))
+    hasParking = argBoolNullCheck(args.get("hasParking"))
+    petAllowed = argBoolNullCheck(args.get("petAllowed"))
     endDate = argNullCheck(args.get("endDate"))
-    roommates = argNullCheck(args.get("roommates"))
+    roommates = argIntNullCheck(args.get("roommates"))
     timeInterval = argNullCheck(args.get("timeInterval"))
 
     functionArgStr = HOUSING_LEASE_FUNCTION.format(priceMin = priceMin,priceMax = priceMax,bedroomNumber = bedroomNumber,
@@ -78,15 +78,15 @@ searchHousingSale(priceMin,priceMax,bedroomNumber,bathroomNumber,homeType,size,d
                     furnished,parkingNumber,timeInterval)
 '''
 def getHousingSaleFunctionArgStr(args):
-    priceMin = argNullCheck(args.get("priceMin"))
-    priceMax = argNullCheck(args.get("priceMax"))
-    bedroomNumber = argNullCheck(args.get("bedroomNumber"))
-    bathroomNumber = argNullCheck(args.get("bathroomNumber"))
+    priceMin = argFloatNullCheck(args.get("priceMin"))
+    priceMax = argFloatNullCheck(args.get("priceMax"))
+    bedroomNumber = argIntNullCheck(args.get("bedroomNumber"))
+    bathroomNumber = argIntNullCheck(args.get("bathroomNumber"))
     homeType = argNullCheck(args.get("homeType"))
-    size = argNullCheck(args.get("size"))
+    size = argFloatNullCheck(args.get("size"))
     dateAvailable = argNullCheck(args.get("dateAvailable"))
-    furnished = argNullCheck(args.get("furnished"))
-    parkingNumber = argNullCheck(args.get("parkingNumber"))
+    furnished = argBoolNullCheck(args.get("furnished"))
+    parkingNumber = argIntNullCheck(args.get("parkingNumber"))
     timeInterval = argNullCheck(args.get("timeInterval"))
 
     functionArgStr = HOUSING_SALE_FUNCTION.format(priceMin = priceMin,priceMax = priceMax,bedroomNumber = bedroomNumber,
@@ -99,3 +99,22 @@ def argNullCheck(argStr):
     if argStr == None:
     	return "NULL"
     return '"' + argStr + '"'
+
+def argIntNullCheck(argStr):
+    if argStr == None:
+    	return "NULL"
+    return int(argStr)
+
+def argFloatNullCheck(argStr):
+    if argStr == None:
+    	return "NULL"
+    return float(argStr)
+
+def argBoolNullCheck(argStr):
+    if argStr == None:
+    	return "NULL"
+    arg = argStr.lower()
+    if arg == "true":
+        return "TRUE"
+    elif arg == "false":
+        return "FALSE"

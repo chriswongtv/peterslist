@@ -24,7 +24,7 @@ def executePeterListQuery(query):
 def queryAsterix(query):
 	response = executePeterListQuery(query)
 	if response != None:
-		return json.dumps(json.loads(response.text)['results'])
+		return json.dumps(json.loads(response.text))#['results'])
 	return None
 
 def dmlAsterix(query):

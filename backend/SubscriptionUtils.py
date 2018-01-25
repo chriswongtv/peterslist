@@ -12,7 +12,8 @@ SUBSCRIBE_HOUSING_SALE_CHANNEL = 'subscribe to housingSaleChannel{} on peterList
 SUBSCRIBE_HOUSING_LEASE_CHANNEL = 'subscribe to housingLeaseChannel{} on peterListBroker;'
 
 INSERT_USER_SUBSCRIPTION = 'insert into UserSubscription({{"subID": "{}", "userID": "{}"}});'
-GET_CHANNEL_RESULT_BY_SUBID = 'SELECT r.result.p FROM {} r WHERE r.subscriptionId = uuid("{}");'
+GET_USERID_FROM_SUBID = 'SELECT VALUE userID from UserSubscription where subID = "{}";'
+GET_CHANNEL_RESULT_BY_SUBID = 'SELECT VALUE r.result FROM {} r WHERE r.subscriptionId = uuid("{}");'
 DELETE_CHANNEL_RESULT = 'DELETE from {} r WHERE r.subscriptionId = uuid("{}");'
 
 # API Response Messages
@@ -42,7 +43,7 @@ def subscribeToChannelAndInsertUser(subscribeStr, userId):
 	resp = queryAsterix(subscribeStr)
 	if resp == None:
 		return "Error subscribing to this channel"
-	response = json.loads(resp)
+	response = json.loads(resp)['results']
 	subId = response[0]
 	insertUserSubscription(userId, subId)
 	return SUBSCRIBE_API_RESPONSE.format(userId, subId)
@@ -55,6 +56,15 @@ def getResultUsingSubId(channelResultSet, subId):
 	queryString = GET_CHANNEL_RESULT_BY_SUBID.format(channelResultSet, subId)
 	result = queryAsterix(queryString)
 	return result
+
+def getUserIdUsingSubId(subId):
+	queryString = GET_USERID_FROM_SUBID.format(subId)
+	resp = queryAsterix(queryString)
+	if resp == None:
+		return "No email notifications to send"
+	userId = json.loads(resp)['results'][0]
+	return userId
+
 
 '''
 Delete all the results with the given sub id from the channelResultDataset

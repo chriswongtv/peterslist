@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 from flask import make_response
 from flask_cors import CORS
+from flask import Response
 import requests
 import json
 
@@ -15,8 +16,6 @@ app = Flask(__name__,
 			template_folder = "../dist")
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-DB = 1 # 1 = AsterixDB, 0 = Couchbase
-
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
@@ -24,8 +23,13 @@ def catch_all(path):
 
 @app.route('/api/search')
 def search():
-	if (DB):
-		return asterixSearch(request.args)
+	data = asterixSearch(request.args)
+	response = Response(
+		response=data,
+		status=200,
+		mimetype='application/json'
+	)
+	return response
 
 @app.route('/api/subscribe', methods=['POST'])
 def subscribe():
@@ -128,10 +132,16 @@ def handleSubscription(args):
 		return SubscriptionUtils.subscribeJobsChannel(functionArgs, userId)
 	elif postType == "Events":
 		functionArgs = ApiUtils.getEventFunctionArgStr(args)
-		return SubscriptionUtils.getEventFunctionArgStr(functionArgs, userId)
+		return SubscriptionUtils.subscribeEventsChannel(functionArgs, userId)
 	elif postType == "Items":
 		functionArgs = ApiUtils.getItemFunctionArgStr(args)
-		return SubscriptionUtils.getItemFunctionArgStr(functionArgs, userId)
+		return SubscriptionUtils.subscribeItemChannel(functionArgs, userId)
+	elif postType == "HousingSale":
+		functionArgs = ApiUtils.getHousingSaleFunctionArgStr(args)
+		return SubscriptionUtils.subscribeHouseSaleChannel(functionArgs, userId)
+	elif postType == "HousingLease":
+		functionArgs = ApiUtils.getHousingLeaseFunctionArgStr(args)
+		return SubscriptionUtils.subscribeHouseLeaseChannel(functionArgs, userId)
 	return None
 
 @app.route('/brokerNotifications', methods=['POST'])
@@ -142,15 +152,17 @@ def handleBrokerNotification():
 	channelResultSet = notificationDict["channelName"] + "Results"
 	subId = notificationDict["subscriptionIds"][0]
 	# Get results using the subscription id
-	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))
-	#for i in subIdResults:
-	#	print(i["p"]["jobIndustry"])
+	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))["results"]
+	for i in subIdResults:
+		print(i)
 
+	userId = SubscriptionUtils.getUserIdUsingSubId(subId)
+	print("-------> ", subId, userId)
 	#TODO sendEmail(subIdResults, emailAddress)
 
 	# Delete all the results
 	SubscriptionUtils.deleteResultUsingSubId(channelResultSet, subId)
-	return subIdResults
+	return "Success" #subIdResults
 
 if __name__ == '__main__':
 	app.run()
