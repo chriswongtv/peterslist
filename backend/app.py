@@ -16,10 +16,10 @@ app = Flask(__name__,
 			template_folder = "../dist")
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-#@app.route('/', defaults={'path': ''})
-#@app.route('/<path:path>')
-#def catch_all(path):
-#	return render_template("index.html")
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+	return render_template("index.html")
 
 @app.route('/api/search')
 def search():
