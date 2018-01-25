@@ -17,10 +17,10 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 DB = 1 # 1 = AsterixDB, 0 = Couchbase
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-	return render_template("index.html")
+#@app.route('/', defaults={'path': ''})
+#@app.route('/<path:path>')
+#def catch_all(path):
+#	return render_template("index.html")
 
 @app.route('/api/search')
 def search():
@@ -142,15 +142,15 @@ def handleBrokerNotification():
 	channelResultSet = notificationDict["channelName"] + "Results"
 	subId = notificationDict["subscriptionIds"][0]
 	# Get results using the subscription id
-	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))
-	#for i in subIdResults:
-	#	print(i["p"]["jobIndustry"])
+	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))["results"]
+	for i in subIdResults:
+		print(i)
 
 	#TODO sendEmail(subIdResults, emailAddress)
 
 	# Delete all the results
 	SubscriptionUtils.deleteResultUsingSubId(channelResultSet, subId)
-	return subIdResults
+	return "Success" #subIdResults
 
 if __name__ == '__main__':
 	app.run()
