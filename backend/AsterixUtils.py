@@ -6,6 +6,8 @@ ASTERIX_API_URL = "http://localhost:19002/query/service"
 HEADERS = { 'content-type': "application/x-www-form-urlencoded",
 			'cache-control': "no-cache" }
 
+POSTING_BY_ID_STR = "SELECT VALUE p FROM Postings p WHERE p.postID = {};"
+
 JOBS_FUNCTION_STR = "searchJob{};"
 EVENTS_FUNCTION_STR = "searchEvent{};"
 ITEMS_FUNCTION_STR = "searchItemSale{};"
@@ -33,6 +35,10 @@ def dmlAsterix(query):
 		status = json.dumps(json.loads(response.text)['status'])
 		return status
 	return None
+
+def getPostingById(id):
+	queryStr = POSTING_BY_ID_STR.format(id)
+	return queryAsterix(queryStr)
 
 def searchJobs(functionArgStr):
 	function = JOBS_FUNCTION_STR.format(functionArgStr)

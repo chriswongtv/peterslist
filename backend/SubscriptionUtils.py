@@ -73,15 +73,3 @@ def deleteResultUsingSubId(channelResultSet, subId):
 	deleteString = DELETE_CHANNEL_RESULT.format(channelResultSet, subId)
 	status = dmlAsterix(deleteString)
 	return status
-
-'''
-Send email using the MailGun API
-'''
-def sendEmail(result, emailAddress):
-	return True
-
-######################## Helper Functions ######################
-def argNullCheck(argStr):
-	if argStr == None:
-		return "NULL"
-	return '"' + argStr + '"'

@@ -39,9 +39,15 @@ def subscribe():
 def unsubscribe():
 	return
 
-@app.route('/api/getListing')
+@app.route('/api/getListing', methods=['GET'])
 def getListing():
-	return getListingInfo(request.args.get('id'))
+	data = getListingInfo(request.args)
+	response = Response(
+		response=data,
+		status=200,
+		mimetype='application/json'
+	)
+	return response
 
 @app.route('/signup')
 def show_sign_up():
@@ -98,6 +104,10 @@ def get_user():
 	# Return user info as JSON
 	return
 
+def getListingInfo(args):
+	postId = ApiUtils.argNullCheck(args.get("id"))
+	return getPostingById(postId)
+
 def asterixSearch(args):
 	postType = args.get('type')
 	if postType == "Jobs":
@@ -116,9 +126,6 @@ def asterixSearch(args):
 		houseLeaseFunctionArgs = ApiUtils.getHousingLeaseFunctionArgStr(args)
 		return searchHousingLease(houseLeaseFunctionArgs)
 	return None
-
-def getListingInfo(id):
-	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
 
 ################ For Subscriptions using Big Active Data #####################
 
