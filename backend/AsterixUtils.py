@@ -1,7 +1,11 @@
 import requests
 import json
 
-ASTERIX_API_URL = "http://localhost:19002/query/service"
+ASTERIX_HOSTNAME = "cacofonix-1.ics.uci.edu"
+ASTERIX_PORT = "19002"
+ASTERIX_QUERY_ENDPOINT = "/query/service"
+
+ASTERIX_API_URL = "http://" + ASTERIX_HOSTNAME + ":" + ASTERIX_PORT + ASTERIX_QUERY_ENDPOINT
 
 HEADERS = { 'content-type': "application/x-www-form-urlencoded",
 			'cache-control': "no-cache" }

@@ -37,7 +37,7 @@ def subscribe():
 
 @app.route('/api/unsubscribe', methods=['POST'])
 def unsubscribe():
-	return
+	return handleUnsubscription(request.args)
 
 @app.route('/api/getListing', methods=['GET'])
 def getListing():
@@ -132,7 +132,7 @@ def asterixSearch(args):
 def handleSubscription(args):
 	postType = args.get('type')
 	userId = args.get("userId")
-	if (userId == None):
+	if userId == None:
 		return "Argument 'userId' must be provided."
 	if postType == "Jobs":
 		functionArgs = ApiUtils.getJobFunctionArgStr(args)
@@ -151,12 +151,20 @@ def handleSubscription(args):
 		return SubscriptionUtils.subscribeHouseLeaseChannel(functionArgs, userId)
 	return None
 
+def handleUnsubscription(args):
+	subId = args.get('subId')
+	channelName = args.get("channelName")
+	if subId == None or channelName == None:
+		return "Provide both arguments: 'subId' and 'channelName'"
+	SubscriptionUtils.unsubscribeFromChannel(subId, channelName)
+	return "Successfully unsubscribed id {} from channel {}".format(subId, channelName)
+
 @app.route('/brokerNotifications', methods=['POST'])
 def handleBrokerNotification():
 	notificationJsonString = list(request.form.to_dict().keys())[0]
 	notificationDict = json.loads(notificationJsonString)
-
-	channelResultSet = notificationDict["channelName"] + "Results"
+	channelName = notificationDict["channelName"]
+	channelResultSet = channelName + "Results"
 	subId = notificationDict["subscriptionIds"][0]
 	# Get results using the subscription id
 	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))["results"]
@@ -165,7 +173,7 @@ def handleBrokerNotification():
 
 	userId = SubscriptionUtils.getUserIdUsingSubId(subId)
 	print("-------> ", subId, userId)
-	#TODO sendEmail(subIdResults, emailAddress)
+	#TODO sendEmail(subIdResults, emailAddress, subId, channelName)
 
 	# Delete all the results
 	SubscriptionUtils.deleteResultUsingSubId(channelResultSet, subId)
