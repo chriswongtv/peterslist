@@ -1,12 +1,14 @@
 import requests
 import json
 
-ASTERIX_HOSTNAME = "cacofonix-1.ics.uci.edu"
-ASTERIX_PORT = "19002"
-ASTERIX_QUERY_ENDPOINT = "/query/service"
+from os import environ
+from os.path import join, dirname
+from dotenv import load_dotenv
 
-ASTERIX_API_URL = "http://" + ASTERIX_HOSTNAME + ":" + ASTERIX_PORT + ASTERIX_QUERY_ENDPOINT
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
+ASTERIX_API_URL = environ.get("DB_URL")
 HEADERS = { 'content-type': "application/x-www-form-urlencoded",
 			'cache-control': "no-cache" }
 
