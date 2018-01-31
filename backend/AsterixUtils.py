@@ -1,10 +1,18 @@
 import requests
 import json
 
-ASTERIX_API_URL = "http://localhost:19002/query/service"
+from os import environ
+from os.path import join, dirname
+from dotenv import load_dotenv
 
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+ASTERIX_API_URL = environ.get("DB_URL")
 HEADERS = { 'content-type': "application/x-www-form-urlencoded",
 			'cache-control': "no-cache" }
+
+POSTING_BY_ID_STR = "SELECT VALUE p FROM Postings p WHERE p.postID = {};"
 
 JOBS_FUNCTION_STR = "searchJob{};"
 EVENTS_FUNCTION_STR = "searchEvent{};"
@@ -33,6 +41,10 @@ def dmlAsterix(query):
 		status = json.dumps(json.loads(response.text)['status'])
 		return status
 	return None
+
+def getPostingById(id):
+	queryStr = POSTING_BY_ID_STR.format(id)
+	return queryAsterix(queryStr)
 
 def searchJobs(functionArgStr):
 	function = JOBS_FUNCTION_STR.format(functionArgStr)

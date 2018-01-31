@@ -15,6 +15,7 @@ INSERT_USER_SUBSCRIPTION = 'insert into UserSubscription({{"subID": "{}", "userI
 GET_USERID_FROM_SUBID = 'SELECT VALUE userID from UserSubscription where subID = "{}";'
 GET_CHANNEL_RESULT_BY_SUBID = 'SELECT VALUE r.result FROM {} r WHERE r.subscriptionId = uuid("{}");'
 DELETE_CHANNEL_RESULT = 'DELETE from {} r WHERE r.subscriptionId = uuid("{}");'
+UNSUBSCRIBE_FROM_CHANNEL = 'unsubscribe "{}" from {};'
 
 # API Response Messages
 SUBSCRIBE_API_RESPONSE = "Subscribed userId {} with subscription id {}."
@@ -65,6 +66,10 @@ def getUserIdUsingSubId(subId):
 	userId = json.loads(resp)['results'][0]
 	return userId
 
+def unsubscribeFromChannel(subId, channelName):
+	queryString = UNSUBSCRIBE_FROM_CHANNEL.format(subId, channelName)
+	status = dmlAsterix(queryString)
+	return status
 
 '''
 Delete all the results with the given sub id from the channelResultDataset
@@ -73,15 +78,3 @@ def deleteResultUsingSubId(channelResultSet, subId):
 	deleteString = DELETE_CHANNEL_RESULT.format(channelResultSet, subId)
 	status = dmlAsterix(deleteString)
 	return status
-
-'''
-Send email using the MailGun API
-'''
-def sendEmail(result, emailAddress):
-	return True
-
-######################## Helper Functions ######################
-def argNullCheck(argStr):
-	if argStr == None:
-		return "NULL"
-	return '"' + argStr + '"'

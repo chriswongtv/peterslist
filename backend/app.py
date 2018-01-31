@@ -37,11 +37,17 @@ def subscribe():
 
 @app.route('/api/unsubscribe', methods=['POST'])
 def unsubscribe():
-	return
+	return handleUnsubscription(request.args)
 
-@app.route('/api/getListing')
+@app.route('/api/getListing', methods=['GET'])
 def getListing():
-	return getListingInfo(request.args.get('id'))
+	data = getListingInfo(request.args)
+	response = Response(
+		response=data,
+		status=200,
+		mimetype='application/json'
+	)
+	return response
 
 @app.route('/signup')
 def show_sign_up():
@@ -98,6 +104,10 @@ def get_user():
 	# Return user info as JSON
 	return
 
+def getListingInfo(args):
+	postId = ApiUtils.argNullCheck(args.get("id"))
+	return getPostingById(postId)
+
 def asterixSearch(args):
 	postType = args.get('type')
 	if postType == "Jobs":
@@ -117,15 +127,12 @@ def asterixSearch(args):
 		return searchHousingLease(houseLeaseFunctionArgs)
 	return None
 
-def getListingInfo(id):
-	return queryAsterix('SELECT p FROM Postings p WHERE p.postID = "' + id + '";')
-
 ################ For Subscriptions using Big Active Data #####################
 
 def handleSubscription(args):
 	postType = args.get('type')
 	userId = args.get("userId")
-	if (userId == None):
+	if userId == None:
 		return "Argument 'userId' must be provided."
 	if postType == "Jobs":
 		functionArgs = ApiUtils.getJobFunctionArgStr(args)
@@ -144,12 +151,20 @@ def handleSubscription(args):
 		return SubscriptionUtils.subscribeHouseLeaseChannel(functionArgs, userId)
 	return None
 
+def handleUnsubscription(args):
+	subId = args.get('subId')
+	channelName = args.get("channelName")
+	if subId == None or channelName == None:
+		return "Provide both arguments: 'subId' and 'channelName'"
+	SubscriptionUtils.unsubscribeFromChannel(subId, channelName)
+	return "Successfully unsubscribed id {} from channel {}".format(subId, channelName)
+
 @app.route('/brokerNotifications', methods=['POST'])
 def handleBrokerNotification():
 	notificationJsonString = list(request.form.to_dict().keys())[0]
 	notificationDict = json.loads(notificationJsonString)
-
-	channelResultSet = notificationDict["channelName"] + "Results"
+	channelName = notificationDict["channelName"]
+	channelResultSet = channelName + "Results"
 	subId = notificationDict["subscriptionIds"][0]
 	# Get results using the subscription id
 	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))["results"]
@@ -158,7 +173,7 @@ def handleBrokerNotification():
 
 	userId = SubscriptionUtils.getUserIdUsingSubId(subId)
 	print("-------> ", subId, userId)
-	#TODO sendEmail(subIdResults, emailAddress)
+	#TODO sendEmail(subIdResults, emailAddress, subId, channelName)
 
 	# Delete all the results
 	SubscriptionUtils.deleteResultUsingSubId(channelResultSet, subId)
