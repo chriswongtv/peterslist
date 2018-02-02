@@ -15,7 +15,10 @@ INSERT_USER_SUBSCRIPTION = 'insert into UserSubscription({{"subID": "{}", "userI
 GET_USERID_FROM_SUBID = 'SELECT VALUE userID from UserSubscription where subID = "{}";'
 GET_CHANNEL_RESULT_BY_SUBID = 'SELECT VALUE r.result FROM {} r WHERE r.subscriptionId = uuid("{}");'
 DELETE_CHANNEL_RESULT = 'DELETE from {} r WHERE r.subscriptionId = uuid("{}");'
+
+# Unsubscribe
 UNSUBSCRIBE_FROM_CHANNEL = 'unsubscribe "{}" from {};'
+DELETE_SUBID_FROM_USER_SUBSCRIPTION = 'delete from UserSubscription where subID = "{}";'
 
 # API Response Messages
 SUBSCRIBE_API_RESPONSE = "Subscribed userId {} with subscription id {}."
@@ -51,7 +54,7 @@ def subscribeToChannelAndInsertUser(subscribeStr, userId):
 
 def insertUserSubscription(userId, subId):
 	insertString = INSERT_USER_SUBSCRIPTION.format(subId, userId)
-	print(dmlAsterix(insertString))
+	dmlAsterix(insertString)
 
 def getResultUsingSubId(channelResultSet, subId):
 	queryString = GET_CHANNEL_RESULT_BY_SUBID.format(channelResultSet, subId)
@@ -69,6 +72,15 @@ def getUserIdUsingSubId(subId):
 def unsubscribeFromChannel(subId, channelName):
 	queryString = UNSUBSCRIBE_FROM_CHANNEL.format(subId, channelName)
 	status = dmlAsterix(queryString)
+	if str(status) == "success":
+		deleteSubIdFromUserSubscription(subId)
+		return True
+	else:
+		return False
+
+def deleteSubIdFromUserSubscription(subId):
+	deleteString = DELETE_SUBID_FROM_USER_SUBSCRIPTION.format(subId);
+	status = dmlAsterix(deleteString)
 	return status
 
 '''
