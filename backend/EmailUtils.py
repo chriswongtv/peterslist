@@ -57,3 +57,4 @@ def sendEmail(htmlBody, toEmail):
     text = msg.as_string()
     server.sendmail(FROM_EMAIL, toEmail, text)
     server.quit()
+    print("Sent notification email to", toEmail)
