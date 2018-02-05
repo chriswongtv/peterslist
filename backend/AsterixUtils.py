@@ -38,7 +38,7 @@ def queryAsterix(query):
 def dmlAsterix(query):
 	response = executePeterListQuery(query)
 	if response != None:
-		status = json.dumps(json.loads(response.text)['status'])
+		status = json.loads(response.text)['status']
 		return status
 	return None
 

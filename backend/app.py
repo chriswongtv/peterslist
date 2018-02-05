@@ -7,8 +7,9 @@ from flask import Response
 import requests
 import json
 
-import SubscriptionUtils
 import ApiUtils
+import EmailUtils
+import SubscriptionUtils
 from AsterixUtils import *
 
 app = Flask(__name__,
@@ -156,8 +157,13 @@ def handleUnsubscription(args):
 	channelName = args.get("channelName")
 	if subId == None or channelName == None:
 		return "Provide both arguments: 'subId' and 'channelName'"
-	SubscriptionUtils.unsubscribeFromChannel(subId, channelName)
-	return "Successfully unsubscribed id {} from channel {}".format(subId, channelName)
+	status = SubscriptionUtils.unsubscribeFromChannel(subId, channelName)
+	print("in app.py", status)
+	if status == True:
+		return "Successfully unsubscribed id {} from channel {}".format(subId, channelName)
+	else:
+		return "Error occured when unsubscribing id {} from channel {}".format(subId, channelName)
+	#SubscriptionUtils.deleteSubIdFromUserSubscription(subId)
 
 @app.route('/brokerNotifications', methods=['POST'])
 def handleBrokerNotification():
@@ -168,16 +174,16 @@ def handleBrokerNotification():
 	subId = notificationDict["subscriptionIds"][0]
 	# Get results using the subscription id
 	subIdResults = json.loads(SubscriptionUtils.getResultUsingSubId(channelResultSet, subId))["results"]
-	for i in subIdResults:
-		print(i)
-
 	userId = SubscriptionUtils.getUserIdUsingSubId(subId)
-	print("-------> ", subId, userId)
-	#TODO sendEmail(subIdResults, emailAddress, subId, channelName)
+
+	# Send Email
+	emailBody = EmailUtils.generateEmailHtmlStrFromResults(subIdResults, subId, channelName)
+	print(emailBody)
+	EmailUtils.sendEmail(emailBody, userId)
 
 	# Delete all the results
 	SubscriptionUtils.deleteResultUsingSubId(channelResultSet, subId)
-	return "Success" #subIdResults
+	return "Success"
 
 if __name__ == '__main__':
 	app.run()
