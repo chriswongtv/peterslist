@@ -273,6 +273,18 @@ export default {
         this.searchAlertDialogVisible = false;
         this.searchAlertDialogSubscribeButtonLoading = false;
       });
+    },
+    subscribe: function() {
+      this.searchAlertDialogSubscribeButtonLoading = true;
+      setTimeout(() => {
+        this.$notify({
+          title: 'Success',
+          message: 'You will now be notified for new posts through email.',
+          type: 'success'
+        });
+        this.searchAlertDialogVisible = false;
+        this.searchAlertDialogSubscribeButtonLoading = false;
+      }, 1000);
     }
   }
 }
