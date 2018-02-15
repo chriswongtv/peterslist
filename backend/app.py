@@ -50,16 +50,17 @@ def getListing():
 	)
 	return response
 
-@app.route('/signup')
-def show_sign_up():
-	return render_template('signup.html')
+@app.route('/api/post', methods=['POST'])
+def post():
+	data = request.get_json(force=True)
+	status = insetPosting(json.dumps(data))
+	return Response(response=status, mimetype='application/json')
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
-	email = request.form['email']
-	password = request.form['password']
-	# TODO: Create account and return UID and access token
-	return
+	data = request.get_json(force=True)
+	status = insertUser(json.dumps(data))
+	return Response(response=status, mimetype='application/json')
 
 @app.route('/login')
 def show_login():
@@ -67,19 +68,11 @@ def show_login():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-	email = request.form['email']
-	password = request.form['password']
-	# TODO: Check if email/password is a valid combination
-	return
-
-@app.route('/post')
-def show_post():
-	return render_template('post.html')
-
-@app.route('/api/post', methods=['POST'])
-def post():
-	# TODO: Insert listing into database
-	return
+	data = request.get_json(force=True)
+	email = data["email"]
+	password = data["password"]
+	resp = isValidUser(email,password)
+	return resp
 
 @app.route('/account')
 def show_account():

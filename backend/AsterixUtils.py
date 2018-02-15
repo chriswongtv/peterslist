@@ -12,6 +12,10 @@ ASTERIX_API_URL = environ.get("DB_URL")
 HEADERS = { 'content-type': "application/x-www-form-urlencoded",
 			'cache-control': "no-cache" }
 
+INSERT_POSTING_STR = 'INSERT INTO Postings({})'
+INSERT_USER_STR = 'INSERT INTO User({})'
+
+GET_USERID_BY_EMAIL_PASSWORD = 'SELECT u.userID from User u where u.email = "{}" AND u.password = "{}";'
 POSTING_BY_ID_STR = "SELECT VALUE p FROM Postings p WHERE p.postID = {};"
 
 JOBS_FUNCTION_STR = "searchJob{};"
@@ -42,9 +46,29 @@ def dmlAsterix(query):
 		return status
 	return None
 
+def insetPosting(jsonStr):
+	statement = INSERT_POSTING_STR.format(jsonStr)
+	return queryAsterix(statement)
+
+def insertUser(jsonStr):
+	statement = INSERT_USER_STR.format(jsonStr)
+	return queryAsterix(statement)
+
+def isValidUser(email, password):
+	statement = GET_USERID_BY_EMAIL_PASSWORD.format(email,password)
+	response = executePeterListQuery(statement)
+	resp_dict = json.loads(response.text)
+	resultCount = resp_dict["metrics"]["resultCount"]
+	print(resp_dict)
+	if resultCount >= 1:
+		return json.dumps(resp_dict["results"])
+	return "Invalid"
+
 def getPostingById(id):
 	queryStr = POSTING_BY_ID_STR.format(id)
 	return queryAsterix(queryStr)
+
+###################### SEARCH POSTINGS FUNCTIONS ######################
 
 def searchJobs(functionArgStr):
 	function = JOBS_FUNCTION_STR.format(functionArgStr)
