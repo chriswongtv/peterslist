@@ -5,7 +5,7 @@
         <span>Peters</span>list
       </a>
     </div>
-    <el-menu :default-active="defaultActiveIndex" class="post-housing-tab-bar" mode="horizontal" @select="handleTabSelect">
+    <el-menu default-active="0" class="post-housing-tab-bar" mode="horizontal" @select="handleTabSelect">
       <el-menu-item index="0">Lease</el-menu-item>
       <el-menu-item index="1">For Sale</el-menu-item>
     </el-menu>
@@ -109,7 +109,7 @@
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">Post</el-button>
+          <el-button type="primary" @click="postHousing">Post</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -123,7 +123,6 @@ export default {
   name: 'PostHousing',
   data () {
     return {
-      defaultActiveIndex: '0',
       index: 0,
       form: {
         localityName: '',
@@ -155,7 +154,7 @@ export default {
     handleTabSelect: function(key) {
       this.index = parseInt(key);
     },
-    onSubmit: function() {
+    postHousing: function() {
 
     }
   }

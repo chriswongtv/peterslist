@@ -66,4 +66,8 @@ body {
   height: 100%;
   padding: 0;
 }
+
+.el-form--label-top .el-form-item__label {
+  padding: 0;
+}
 </style>
