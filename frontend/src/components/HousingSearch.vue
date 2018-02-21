@@ -9,9 +9,19 @@
       <el-row :gutter="10">
         <el-col :md="5">
           <div class="result-filter-container">
-            <el-button type="default" class="full-width" @click="searchAlertDialogVisible = true" plain>
+            <router-link to="/post/housing">
+              <el-button type="primary" class="full-width" plain>
+                Post New Listing
+              </el-button>
+            </router-link>
+            <el-button type="success" class="full-width" @click="searchAlertDialogVisible = true" plain>
               Create Search Alert
             </el-button>
+            <label>Category</label>
+            <el-radio-group class="housing-type-button" v-model="housingSearchOptions.housingSearchType" size="medium">
+              <el-radio-button label="Lease"></el-radio-button>
+              <el-radio-button label="For Sale"></el-radio-button>
+            </el-radio-group>
             <label>Room Type</label>
             <el-select v-model="housingSearchOptions.housingSearchRoommate" placeholder="All Rooms">
               <el-option label="All Rooms" value="0">
@@ -92,6 +102,7 @@ export default {
     return {
       timeout: null,
       housingSearchOptions: {
+        housingSearchType: 'Lease',
         housingSearchQuery: '',
         housingDateStart: new Date(), // Sets the move-in date to today by default
         housingOptions: ['Parking', 'Private bathroom', 'Pets allowed'], // The options to be displayed in the checkbox
@@ -108,6 +119,19 @@ export default {
     this.loadHousingOptions();
   },
   watch: {
+    'housingSearchOptions.housingSearchType': function() {
+      clearTimeout(this.timeout);
+
+      var query = this.$parent.getQueryString();
+
+      query.type = this.housingSearchOptions.housingSearchType;
+
+      this.$router.replace({ query: query })
+
+      this.timeout = setTimeout(() => {
+        this.searchHousing();
+      }, 500)
+    },
     'housingSearchOptions.housingSearchQuery': function() {
       clearTimeout(this.timeout);
 
@@ -197,12 +221,19 @@ export default {
           this.housingSearchOptions.housingCheckbox.push('Pets allowed');
         } else if (q === 'q') {
           this.housingSearchOptions.housingSearchQuery = decodeURI(this.$router.currentRoute.query[q]);
+        } else if (q === 'type') {
+          this.housingSearchOptions.housingSearchType = this.$router.currentRoute.query[q];
         }
       };
     },
     getParams: function() {
       var params = {};
-      params.type = 'HousingLease';
+
+      if (this.housingSearchOptions.housingSearchType === 'For Sale') {
+        params.type = 'HousingSale';
+      } else {
+        params.type = 'HousingLease';
+      }
 
       if (this.housingSearchOptions.housingSearchQuery) {
         params.query = this.housingSearchOptions.housingSearchQuery;
@@ -250,7 +281,7 @@ export default {
     searchHousing: function() {
       const vm = this;
 
-      axios.get('http://localhost:5000/api/search', {
+      axios.get('http://cacofonix-1.ics.uci.edu:5000/api/search', {
         params: this.getParams()
       }).then(res => {
         vm.housingSearchResults = res.data.results; // Store the results
@@ -262,7 +293,7 @@ export default {
       var params = this.getParams();
       params.userId = 'fac45e';
 
-      var url = 'http://localhost:5000/api/subscribe?' + jQuery.param(params);
+      var url = 'http://cacofonix-1.ics.uci.edu:5000/api/subscribe?' + jQuery.param(params);
 
       axios.post(url).then(res => {
         this.$notify({
@@ -279,27 +310,16 @@ export default {
 </script>
 
 <style scoped>
-#search-panel-house {
-  text-align: center;
+.result-filter-container>label {
+  padding-top: 5px;
+  padding-bottom: 2.5px;
 }
 
-#search-panel-house label {
-  margin-left: 0;
-}
-
-#search-panel-house .el-col+.el-col+.el-col+.el-col {
-  margin-top: 10px;
-}
-
-#search-panel-house .el-dropdown, #search-panel-house .el-dropdown>button {
+.housing-type-button {
   width: 100%;
 }
 
-#search-panel-house #housing-price {
-  padding: 0 20px !important;
-}
-
-#housing-results .el-col+.el-col+.el-col+.el-col {
-  padding-top: 30px;
+.el-button--primary.is-plain {
+  margin-bottom: 10px;
 }
 </style>

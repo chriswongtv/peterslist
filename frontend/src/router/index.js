@@ -13,6 +13,7 @@ const routerOptions = [
     ]
   },
   { path: '/housing/:id', component: 'HousingResult' },
+  { path: '/post/housing', component: 'PostHousing' },
   { path: '*', component: 'NotFound' }
 ]
 
