@@ -16,6 +16,32 @@
         </el-dropdown-menu>
       </el-dropdown>
     </a>
+    <div id="user-reg-container">
+      <el-popover
+        ref="login-popover"
+        placement="bottom"
+        trigger="hover"
+        width="240"
+        v-model="loginPopoverVisible">
+        <el-form ref="form" :model="loginForm" label-position="top">
+          <el-form-item label="Email">
+            <el-input v-model="loginForm.email"></el-input>
+          </el-form-item>
+          <el-form-item label="Password">
+            <el-input type="password" v-model="loginForm.password"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" :loading="loginButtonIsLoading" @click="login">Login</el-button>
+            <router-link to="/register">
+              <el-button>Register</el-button>
+            </router-link>
+          </el-form-item>
+        </el-form>
+      </el-popover>
+
+      <el-button v-popover:login-popover type="primary" plain round v-if="!isLoggedIn()">Login</el-button>
+      <el-button v-on:click="logout()" type="primary" plain round v-if="isLoggedIn()">Logout</el-button>
+    </div>
     <div id="search-panel" v-if="searchPanelType === ''" :class="{ clicked: searchPanelType !== '' }">
       <div id="search-panel-icons" v-if="searchPanelType === ''">
         <el-row :gutter="10">
@@ -190,10 +216,18 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Home',
   data () {
     return {
+      loginPopoverVisible: false,
+      loginForm: {
+        email: '',
+        password: ''
+      },
+      loginButtonIsLoading: false,
       searchPanelType: '', // Changes when a new 'type' is selected
       timeout: null, // For cancelTimeout() purposes
       urlQueries: {}, // For URL queries storage
@@ -352,6 +386,27 @@ export default {
     },
     searchAll: function() {
 
+    },
+    login: function() {
+      this.loginButtonIsLoading = true;
+
+      axios.post('http://cacofonix-1.ics.uci.edu:5000/api/login', {
+        email: this.loginForm.email,
+        password: this.loginForm.password
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data === 'Invalid') {
+          this.$notify.error({
+            title: 'Login Failed',
+            message: 'Your email and password do not match.'
+          });
+        } else {
+          this.setUser(this.loginForm.email);
+        }
+
+        this.loginButtonIsLoading = false;
+      })
     }
   }
 };
@@ -379,6 +434,12 @@ export default {
 
 #main #logo {
   position: absolute;
+}
+
+#user-reg-container {
+  position: absolute;
+  top: 5%;
+  right: 4%;
 }
 
 /* Search */

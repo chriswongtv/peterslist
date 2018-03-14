@@ -291,7 +291,7 @@ export default {
       this.searchAlertDialogSubscribeButtonLoading = true;
 
       var params = this.getParams();
-      params.userId = 'fac45e';
+      params.userId = this.getUser();
 
       var url = 'http://cacofonix-1.ics.uci.edu:5000/api/subscribe?' + jQuery.param(params);
 

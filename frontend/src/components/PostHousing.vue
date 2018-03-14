@@ -5,7 +5,7 @@
         <span>Peters</span>list
       </a>
     </div>
-    <el-menu :default-active="defaultActiveIndex" class="post-housing-tab-bar" mode="horizontal" @select="handleTabSelect">
+    <el-menu default-active="0" class="post-housing-tab-bar" mode="horizontal" @select="handleTabSelect">
       <el-menu-item index="0">Lease</el-menu-item>
       <el-menu-item index="1">For Sale</el-menu-item>
     </el-menu>
@@ -63,7 +63,7 @@
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">Post</el-button>
+          <el-button type="primary" @click="postHousing('Housing Lease')">Post</el-button>
         </el-form-item>
       </el-form>
       
@@ -109,7 +109,7 @@
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">Post</el-button>
+          <el-button type="primary" @click="postHousing('Housing Sale')">Post</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -123,7 +123,6 @@ export default {
   name: 'PostHousing',
   data () {
     return {
-      defaultActiveIndex: '0',
       index: 0,
       form: {
         localityName: '',
@@ -132,6 +131,7 @@ export default {
         state: '',
         city: '',
         zip: '',
+        country: 'USA',
         price: '',
         homeType: '',
         dateAvailable: '',
@@ -146,7 +146,9 @@ export default {
     }
   },
   mounted: function() {
-
+    if (!this.isLoggedIn()) {
+      this.$router.push('/')
+    }
   },
   watch: {
 
@@ -155,8 +157,42 @@ export default {
     handleTabSelect: function(key) {
       this.index = parseInt(key);
     },
-    onSubmit: function() {
+    postHousing: function(category) {
+      var formData = {
+        postInfo: {
+          location: {
+            buildingNumber: parseInt(this.form.buildingNumber),
+            streetName: this.form.streetName,
+            city: this.form.city,
+            state: this.form.state,
+            zip: parseInt(this.form.zip),
+            country: this.form.country
+          },
+          amount: parseFloat(this.form.price),
+          description: this.form.description,
+          createdOn: Date(),
+          userID: this.getUser(),
+          photos: ['https://images.unsplash.com/photo-1473447216727-44efba8cf0e0?dpr=1&auto=format&fit=crop&w=1500&h=1001&q=80&cs=tinysrgb&crop=&bg=']
+        },
+        dateAvailable: this.form.dateAvailable,
+        endDate: this.form.endDate,
+        homeType: this.form.homeType,
+        localityName: this.form.localityName,
+        postingCategory: category,
+        bedroomNumber: parseInt(this.form.bedroomNumber),
+        bathroomNumber: parseInt(this.form.bathroomNumber),
+        parkingNumber: parseInt(this.form.parkingNumber),
+        occupants: parseInt(this.form.occupants),
+        roommates: parseInt(this.form.roommates),
+        furnished: this.form.amenities.includes('Furnished'),
+        petAllowed: this.form.amenities.includes('Pets Allowed'),
+        hasParking: this.form.amenities.includes('Parking')
+      };
 
+      axios.post('http://cacofonix-1.ics.uci.edu:5000/api/post', formData)
+        .then((response) => {
+          console.log(response)
+        });
     }
   }
 }
